@@ -1,26 +1,27 @@
 <template>
   <div>
-    <p>{{ words }}</p>
+    <p v-for="word in wordList" :key="word.text">
+      {{ word.text + ": "  + word.definition}}
+    </p>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
+import { Word } from "../models/index";
+
 export default Vue.extend({
-  name: 'WordList',
+  name: "WordList",
   data() {
     return {
-      words: 'Hello!',
+      wordList: [] as Word[]
     };
   },
-  created() {
-    this.$store.dispatch('getWords')
-    .then(() => {
-      this.words = this.$store.state.wordList
-    })
+  mounted() {
+    this.$store.dispatch("getWords").then(() => {
+      this.wordList = this.$store.state.wordList;
+    });
   }
-})
+});
 </script>
-<style>
-
-</style>
+<style></style>
