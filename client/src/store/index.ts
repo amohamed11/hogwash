@@ -1,48 +1,30 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
-import { Word } from "@/models/index";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    wordList: [] as Word[]
+    isConnected: false,
+    socketMessage: ''
   },
-  mutations: {
-    setWordList(state, list: Word[]) {
-      state.wordList = list;
+  mutations:{
+    SOCKET_CONNECTED(state) {
+      state.isConnected = true;
+    },
+    SOCKET_DISCONNECTED(state) {
+      state.isConnected = false;
+    },
+    SOCKET_MESSAGECHANNEL(state, message) {
+      state.socketMessage = message;
     }
   },
   actions: {
-    async getWords({ commit }) {
-      await axios
-        .get("http://localhost:5000/api/getWords")
-        .then(response => {
-          const mappedResponse: Word[] = response.data.map(
-            (w: any) =>
-              ({
-                text: Object.keys(w)[0],
-                definition: w[Object.keys(w)[0]]
-              } as Word)
-          );
-          commit("setWordList", mappedResponse);
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    SOCKET_CONNECT({ commit }) {
+      commit("SOCKET_CONNECTED");
     },
-    submitAnswer({ commit }, answer) {
-      axios
-      .post("http://localhost:5000/api/submitAnswer", {
-        answer: answer
-      })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    SOCKET_DISCONNECT({ commit }) {
+      commit("SOCKET_DISCONNECTED");
     }
   },
   modules: {}
