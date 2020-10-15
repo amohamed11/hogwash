@@ -19,13 +19,6 @@ export default new Vuex.Store({
       state.socketMessage = message;
     }
   },
-  actions: {
-    SOCKET_CONNECT({ commit }) {
-      commit("SOCKET_CONNECTED");
-    },
-    SOCKET_DISCONNECT({ commit }) {
-      commit("SOCKET_DISCONNECTED");
-    }
-  },
+  actions: {},
   modules: {}
 });

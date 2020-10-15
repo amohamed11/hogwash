@@ -10,10 +10,15 @@ const server = app.listen(`${port}`, function() {
 const io = socketio(server);
     
 io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+        socket.emit("oh", "oh");
+    });
+    socket.on('createRoom', function(room) {
+        socket.join(room);
+        socket.emit("createRoom", "success");
+    });
     socket.on('joinRoom', function(room) {
         socket.join(room);
-    });
-    socket.on('disconnect', () => {
-        socket.broadcast.emit("oh", "oh");
+        socket.emit("joinRoom", "success");
     });
 });

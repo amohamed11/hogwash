@@ -2,7 +2,7 @@
   <div>
     <p v-if="isConnected">We're connected to the server!</p>
     <p>Message from server: "{{socketMessage}}"</p>
-    <button @click="pingServer()">Ping Server</button>
+    <button @click="createRoom()">Ping Server</button>
   </div>
 </template>
 
@@ -20,23 +20,22 @@ export default Vue.extend({
   sockets: {
     connect() {
       // Fired when the socket connects.
-      this.isConnected = true;
+      this.$store.commit("SOCKET_CONNECTED")
     },
 
     disconnect() {
-      this.isConnected = false;
+      this.$store.commit("SOCKET_DISCONNECTED")
     },
 
     // Fired when the server sends something on the "messageChannel" channel.
     messageChannel(data) {
-      this.socketMessage = data
+      this.$store.commit("SOCKET_MESSAGECHANNEL", data)
     }
   },
 
   methods: {
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit('pingServer', 'yo dawg')
+    createRoom(room) {
+      this.$socket.emit('createRoom', room)
     }
   }
 })
