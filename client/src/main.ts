@@ -4,6 +4,8 @@ import router from "./router";
 import store from "./store";
 import io from "socket.io-client"
 import VueSocketIO from "vue-socket.io";
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
 
 Vue.config.productionTip = false;
 
@@ -16,6 +18,8 @@ Vue.use(new VueSocketIO({
       mutationPrefix: 'SOCKET_'
   }
 }))
+
+Vue.use(Buefy);
 
 new Vue({
   router,

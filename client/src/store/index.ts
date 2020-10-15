@@ -15,7 +15,7 @@ export default new Vuex.Store({
     SOCKET_DISCONNECTED(state) {
       state.isConnected = false;
     },
-    SOCKET_MESSAGECHANNEL(state, message) {
+    SOCKET_CREATEROOM(state, message) {
       state.socketMessage = message;
     }
   },

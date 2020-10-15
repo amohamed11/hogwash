@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@types/socket.io-client": "^1.4.34",
+    "buefy": "^0.9.3",
     "core-js": "^3.6.5",
     "socket.io-client": "^2.3.1",
     "vue": "^2.6.11",
