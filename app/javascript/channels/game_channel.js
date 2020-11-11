@@ -17,15 +17,15 @@ consumer.subscriptions.create("GameChannel", {
   
   joinGame(data) {
     this.perform("joinGame", data);
-    console.log("Sent joinGame request.");
   },
 
   createGame(data) {
     this.perform("createGame", data);
   },
 
-  onAnswer(data) {
-    this.perform("onAnswer", data);
+  onAnswer(data)  {
+    let score = this.perform("onAnswer", data);
+    console.log(score);
   },
 
   onVote(data) {
