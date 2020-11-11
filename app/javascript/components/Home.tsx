@@ -23,44 +23,48 @@ const Home: React.FC<IProps> = props => {
   const [player_name, setPlayerName] = React.useState("");
 
   return (
-    <div className="home">
-      <Content>
+    <div className="home center">
+      <Content spacing="large">
         <Heading level={1}>Hogwash</Heading>
         <Form
           onSubmit={() => alert('Submitted 🎉🎉🎉')}
           onStateChange={setFormState}
         >
-          <Content spacing="large">
-            <InputText
-              onChange={(value) => setPlayerName(value)}
-              defaultValue=""
-              placeholder="Enter name"
-              validations={{
-                required: {
-                  value: true,
-                  message: 'Please enter a name',
-                },
-                minLength: {
-                  value: 1,
-                  message: 'Name must be at least 1 letters.',
-                },
-              }}
-            />
-            <InputText
-              onChange={(value) => setRoomCode(value)}
-              defaultValue=""
-              placeholder="Enter Game Code"
-              validations={{
-                required: {
-                  value: true,
-                  message: 'Please enter a game code',
-                },
-                minLength: {
-                  value: 5,
-                  message: 'Game Code must be 5 characters.',
-                },
-              }}
-            />
+          <Content >
+            <div className="input-group center">
+              <Content>
+                <InputText
+                  onChange={(value) => setPlayerName(value)}
+                  defaultValue=""
+                  placeholder="Enter name"
+                  validations={{
+                    required: {
+                      value: true,
+                      message: 'Please enter a name',
+                    },
+                    minLength: {
+                      value: 1,
+                      message: 'Name must be at least 1 letters.',
+                    },
+                  }}
+                />
+                <InputText
+                  onChange={(value) => setRoomCode(value)}
+                  defaultValue=""
+                  placeholder="Enter Game Code"
+                  validations={{
+                    required: {
+                      value: true,
+                      message: 'Please enter a game code',
+                    },
+                    minLength: {
+                      value: 5,
+                      message: 'Game Code must be 5 characters.',
+                    },
+                  }}
+                />
+              </Content>
+            </div>
             <Button
               label="Join Game"
               type="primary"
