@@ -936,10 +936,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.4.tgz#19bf0f5af19149111c40d98bb0cf82119f5d9eeb"
   integrity sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==
 
-"@jobber/components@^2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@jobber/components/-/components-2.9.0.tgz#5cc6a675480e4233f631a7a4dc1ded57e39e22ed"
-  integrity sha512-67OjU3VGcL3lX5piqzbRpD1M2L9pA0zRyGxtojFcl/HxoGatLyQsAhil6YenD/jjSEbkPY91V4EZ97FAPXVJ+Q==
+"@jobber/components@^2.10.0":
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/@jobber/components/-/components-2.10.0.tgz#9ab07ec7f204dbedff6446d664d1c4346084a538"
+  integrity sha512-ySUG5bAmw/3f96UEbWGDWipctf6DBK8lKyhDw8LG+8OVBE1aKolSdYCxI+pdMwGiruZDGwsWI0FDu0CLAIAMHA==
   dependencies:
     "@jobber/design" "^0.9.1"
     "@jobber/formatters" "^0.0.4"
@@ -5815,6 +5815,11 @@ popmotion@9.0.0-beta-8:
     hey-listen "^1.0.8"
     style-value-types "^3.1.6"
     tslib "^1.10.0"
+
+popper.js@^1.16.1:
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
+  integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
 
 portfinder@^1.0.26:
   version "1.0.28"

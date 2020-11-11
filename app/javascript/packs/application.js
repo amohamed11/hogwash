@@ -15,3 +15,17 @@ require("channels")
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
+
+import React from 'react';
+import { render } from 'react-dom';
+
+import App from '../components/App';
+import consumer from "../channels/consumer";
+import "../channels/index";
+
+document.addEventListener('DOMContentLoaded', () => {
+  render(
+    <App cable={consumer.subscriptions.subscriptions[0]} />,
+    document.querySelector('#root'),
+  );
+});

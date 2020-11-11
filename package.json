@@ -1,9 +1,13 @@
 {
   "name": "hogwash",
   "private": true,
+  "scripts": {
+    "start:dev": "bin/webpack-dev-server"
+  },
   "dependencies": {
     "@babel/preset-react": "^7.12.5",
-    "@jobber/components": "^2.9.0",
+    "@jobber/components": "^2.10.0",
+    "@jobber/design": "^0.9.1",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
@@ -11,6 +15,7 @@
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

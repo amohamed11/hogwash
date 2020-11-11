@@ -6,6 +6,7 @@ module.exports = {
       autoprefixer: {
         flexbox: 'no-2009'
       },
+      importFrom: ["@jobber/design"],
       stage: 3
     })
   ]
