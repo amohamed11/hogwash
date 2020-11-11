@@ -1,40 +1,37 @@
-require ""
-
 class GameChannel < ApplicationCable::Channel
+  def subscribed
+    @gameHandler = GameServices::GameHandler.new
+  end
   def joinGame(data)
-    @game = GameServices::GameHandler.join(data[:room_code])
+    @game = @gameHandler.join(data[:name], data[:room_code])
     stream_for @game
   end
 
   def createGame(data)
-    @game = GameServices::GameHandler.create(data[:word_count])
+    @game = @gameHandler.create(data)
     stream_for @game
-    GameChannel.broadcast_to(@game, {"title": "gameCreated", "words": @game.words})
   end
 
   def onAnswer(data)
-    score = GameServices::GameHandler.handleAnswer(
+    score = @gameHandler.handleAnswer(
       data[:player_id],
       data[:word],
       data[:answer]
     )
-    GameChannel.broadcast_to(@game, {"title": "answered", "score": score})
   end
 
   def onVote(data)
-    score = GameServices::GameHandler.handleAnswer(
+    score = @gameHandler.handleAnswer(
       data[:player_id],
       data[:word],
       data[:answer],
       data[:voted_for_id]
     )
-    GameChannel.broadcast_to(@game, {"title": "voted", "score": score})
   end
 
   def onGameEnd(data)
-    winner = GameServices::GameHandler.selectWinner(data[:room_code])
-    GameChannel.broadcast_to(@game, {"title": "gameDone", "winner": winner})
-    GameServices::GameHandler.deleteGame(data[:room_code])
+    winner = @gameHandler.selectWinner(data[:room_code])
+    @gameHandler.deleteGame(data[:room_code])
   end
   
 end

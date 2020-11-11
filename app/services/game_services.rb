@@ -1,30 +1,29 @@
 require 'securerandom'
 module GameServices
   class GameHandler
+    def initialize()
+    end
+
     def join(name, room_code)
       @game = Game.find(room_code: room_code)
       if @game == nil
         return nil
       end
-      player= Player.create(
-        name: name, 
-        score: 0, 
-        @game
-      )
-
+      player= Player.create(name, 0, @game)
       GameChannel.broadcast_to(@game, {"title": "gameJoined", "room_code": @game.room_code})
     end
 
-    def create(word_count)
+    def create(data)
       room_code = SecureRandom.alphanumeric(5).upcase
-      @game = Game.new(room_code)
+      @game = Game.new(room_code: data[:room_code])
 
+      word_count = data[:word_count].to_i
       words = Word.find(Word.pluck(:id).sample(word_count))
       @game.words = words
 
       @game.save
 
-      return @game
+      GameChannel.broadcast_to(@game, {"title": "gameCreated", "words": words.as_json})
     end
 
     def handleAnswer(player_id, word, answer)
@@ -39,7 +38,7 @@ module GameServices
       player.score += score
       player.save
 
-      return score
+      GameChannel.broadcast_to(@game, {"title": "answered", "score": score})
     end
 
     def handleVote(player_id, word, answer, voted_for_id)
@@ -56,7 +55,8 @@ module GameServices
       player.save
       voted_for_player.save
 
-      return {player.name: player.score, voted_for_player.name: voted_for_player.score}
+      scorebox = {:player.name => player.score, :voted_for_player.name => voted_for_player.score}
+      GameChannel.broadcast_to(@game, {"title": "voted", "score": scorebox})
     end
 
     def selectWinner(room_code)
@@ -66,7 +66,7 @@ module GameServices
       @game.winner = winner
       @game.save
 
-      return winner
+      GameChannel.broadcast_to(@game, {"title": "gameDone", "winner": winner})
     end
 
     def deleteGame(room_code)
