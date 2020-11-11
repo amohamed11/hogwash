@@ -15,13 +15,10 @@ module GameServices
 
     def create(data)
       room_code = SecureRandom.alphanumeric(5).upcase
-      @game = Game.new(room_code: data[:room_code])
 
       word_count = data[:word_count].to_i
       words = Word.find(Word.pluck(:id).sample(word_count))
-      @game.words = words
-
-      @game.save
+      @game = Game.create(room_code: room_code, words: words)
 
       GameChannel.broadcast_to(@game, {"title": "gameCreated", "words": words.as_json})
     end
