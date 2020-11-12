@@ -3,12 +3,12 @@ class GameChannel < ApplicationCable::Channel
     @gameHandler = GameServices::GameHandler.new
   end
   def joinGame(data)
-    @game = @gameHandler.join(data[:name], data[:room_code])
+    @game = @gameHandler.join(data["name"], data["room_code"])
     stream_for @game
   end
 
   def createGame(data)
-    @game = @gameHandler.create(data)
+    @game = @gameHandler.create(data["name"], data["word_count"])
     stream_for @game
   end
 

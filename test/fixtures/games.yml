@@ -1,0 +1,4 @@
+game:
+  id: 1
+  room_code: "12345"
+  done: false

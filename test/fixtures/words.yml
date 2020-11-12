@@ -1,0 +1,20 @@
+word1:
+  id: 1
+  word: "test word 1"
+  definition: "test definition 1"
+word2:
+  id: 2
+  word: "test word 2"
+  definition: "test definition 2"
+word3:
+  id: 3
+  word: "test word 3"
+  definition: "test definition 3"
+word4:
+  id: 4
+  word: "test word 4"
+  definition: "test definition 4"
+word5:
+  id: 5
+  word: "test word 5"
+  definition: "test definition 5"
