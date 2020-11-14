@@ -5,22 +5,22 @@ module GameServices
     end
 
     def join(name, room_code)
-      @game = Game.where(room_code: room_code).first
+      @game = Game.find_by(room_code: room_code)
       if @game == nil
         return nil
       end
       player= Player.create(name: name, score: 0, game: @game)
 
-      GameChannel.broadcast_to(@game, {title: "gameJoined", room_code: room_code})
+      return @game
     end
 
-    def create(name, word_count)
+    def create(creator_name, word_count)
       room_code = SecureRandom.alphanumeric(5).upcase
 
       word_count = word_count.to_i
       words = Word.find(Word.pluck(:id).sample(word_count))
 
-      creator = Player.create(name: name, score: 0)
+      creator = Player.create(name: creator_name, score: 0)
 
       @game = Game.new(
         room_code: room_code, 
@@ -38,12 +38,12 @@ module GameServices
       creator.game = @game
       creator.save
 
-      GameChannel.broadcast_to(@game, {title: "gameCreated", "words": words.as_json})
+      return @game
     end
 
     def handleAnswer(player_id, word, answer)
-      word = @game.words.find(word: word)
       player = @game.players.find(player_id)
+      word = @game.words.find_by(word: word)
       score = 0
 
       if answer == word.definition
@@ -53,13 +53,13 @@ module GameServices
       player.score += score
       player.save
 
-      GameChannel.broadcast_to(@game, {title: "answered", "score": score})
+      GameChannel.broadcast_to @game, score: score
     end
 
     def handleVote(player_id, word, answer, voted_for_id)
-      word = @game.words.find(word: word)
-      player = @game.players.find(name: player_id)
-      voted_for_player = Player.find(voted_for_id)
+      player = @game.players.find(player_id)
+      voted_for_player = @game.players.find(voted_for_id)
+      word = @game.words.find_by(word: word)
 
       if answer == word.definition
         player.score += 2
@@ -70,8 +70,8 @@ module GameServices
       player.save
       voted_for_player.save
 
-      scorebox = {:player.name => player.score, :voted_for_player.name => voted_for_player.score}
-      GameChannel.broadcast_to(@game, {title: "voted", "score": scorebox})
+      scorebox = {player.id => player.score, voted_for_player.id => voted_for_player.score}
+      GameChannel.broadcast_to @game, score: scorebox
     end
 
     def selectWinner(room_code)
@@ -81,7 +81,7 @@ module GameServices
       @game.winner = winner
       @game.save
 
-      GameChannel.broadcast_to(@game, {"title": "gameDone", "winner": winner})
+      GameChannel.broadcast_to @game, winner: winner
     end
 
     def deleteGame(room_code)
