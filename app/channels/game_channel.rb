@@ -15,7 +15,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def onAnswer(data)
-    score = @gameHandler.handleAnswer(
+    @gameHandler.handleAnswer(
       data["player_id"],
       data["word"],
       data["answer"]
@@ -23,7 +23,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def onVote(data)
-    score = @gameHandler.handleVote(
+    @gameHandler.handleVote(
       data["player_id"],
       data["word"],
       data["answer"],
@@ -32,8 +32,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def onGameEnd(data)
-    winner = @gameHandler.selectWinner(data["room_code"])
-    @gameHandler.deleteGame(data["room_code"])
+    @gameHandler.selectWinner()
+    @gameHandler.deleteGame()
   end
   
 end

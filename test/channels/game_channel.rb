@@ -10,6 +10,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert subscription.confirmed?
         assert_equal game.room_code.length, 5
         assert_equal game.words.count, 5
+        assert_broadcast_on(game, words: game.words.as_json)
     end
 
     test "subscribes and join a game" do
@@ -22,6 +23,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
         assert_equal player.game_id, game.id
+        assert_broadcast_on(game, words: game.words.as_json)
      end
 
     test "player answers incorrectly getting score of 0" do
@@ -71,7 +73,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         assert subscription.confirmed?
         assert_has_stream_for game
-        assert_broadcast_on(game, score: {player.id=> 0, voted_for.id=> 1}) do
+        assert_broadcast_on(game, scores: {player.id=> 0, voted_for.id=> 1}) do
           perform :onVote, player_id: player.id, word: word.word, answer: "totoro", voted_for_id: voted_for.id
         end
     end
@@ -89,7 +91,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         assert subscription.confirmed?
         assert_has_stream_for game
-        assert_broadcast_on(game, score: {player.id=> 2, voted_for.id=> 0}) do
+        assert_broadcast_on(game, scores: {player.id=> 2, voted_for.id=> 0}) do
           perform :onVote, player_id: player.id, word: word.word, answer: word.definition, voted_for_id: voted_for.id
         end
     end

@@ -6,10 +6,11 @@ module GameServices
 
     def join(name, room_code)
       @game = Game.find_by(room_code: room_code)
-      if @game == nil
+      if @game == nil?
         return nil
       end
-      player= Player.create(name: name, score: 0, game: @game)
+
+      Player.create(name: name, score: 0, game: @game)
 
       return @game
     end
@@ -29,8 +30,9 @@ module GameServices
         creator: creator
       )
 
-      if !@game.valid?
+      unless @game.valid?
         puts @game.errors.messages
+        return nil
       end
 
       @game.save
@@ -70,11 +72,12 @@ module GameServices
       player.save
       voted_for_player.save
 
-      scorebox = {player.id => player.score, voted_for_player.id => voted_for_player.score}
-      GameChannel.broadcast_to @game, score: scorebox
+      scores = {player.id => player.score, voted_for_player.id => voted_for_player.score}
+
+      GameChannel.broadcast_to @game, scores: scores
     end
 
-    def selectWinner(room_code)
+    def selectWinner()
       players = @game.players
       winner = players.order('score DESC').first
 
@@ -84,7 +87,7 @@ module GameServices
       GameChannel.broadcast_to @game, winner: winner
     end
 
-    def deleteGame(room_code)
+    def deleteGame()
       Game.destroy(@game)
     end
   end
