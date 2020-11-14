@@ -6,7 +6,7 @@ module GameServices
 
     def join(name, room_code)
       @game = Game.find_by(room_code: room_code)
-      if @game == nil?
+      if @game.nil?
         return nil
       end
 
