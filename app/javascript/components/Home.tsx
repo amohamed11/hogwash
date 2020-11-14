@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@jobber/components/Button';
 import { Content } from '@jobber/components/Content';
@@ -32,7 +32,7 @@ const Home: React.FC<IProps> = (props) => {
             <div className="join-input-group center">
               <Content>
                 <InputText
-                  onChange={(value) => setPlayerName(value)}
+                  onChange={(value: string) => setPlayerName(value)}
                   defaultValue=""
                   placeholder="Enter your name"
                   validations={{
@@ -47,7 +47,7 @@ const Home: React.FC<IProps> = (props) => {
                   }}
                 />
                 <InputText
-                  onChange={(value) => setRoomCode(value)}
+                  onChange={(value: string) => setRoomCode(value)}
                   defaultValue=""
                   placeholder="Enter the game code"
                   validations={{
