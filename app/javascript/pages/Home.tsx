@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { Button } from '@jobber/components/Button';
 import { Content } from '@jobber/components/Content';
@@ -25,7 +25,7 @@ const Home: React.FC = (props, mapStateToProps) => {
 
   const cable = useContext(ActionCableContext);
   
-  const gameState = useSelector(state => state); 
+  const game = useSelector<GameState>(state => state.game); 
 
   return (
     <div className="home center">
@@ -104,15 +104,15 @@ const Home: React.FC = (props, mapStateToProps) => {
   );
 
   function joinGame(room_code: string) {
-    cable.joinGame(player_name, room_code);
+    // cable.joinGame(player_name, room_code);
   }
 
   async function createGame(word_count: number) {
-    cable.createGame(player_name, word_count);
+    // cable.createGame(player_name, word_count);
     // await new Promise(r => setTimeout(r, 200));
-    console.log(gameState)
+    console.log(game);
     // history.push("game/"+gameState.game.room_code);
   }
 };
 
-export default connect()(Home);
+export default Home;

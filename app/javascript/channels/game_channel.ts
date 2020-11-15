@@ -1,6 +1,6 @@
 import consumer from "./consumer"
-import { CREATE_GAME } from "../store/actionTypes";
-import { gameCreated } from "../store/actions";
+import { CREATE_GAME } from "../store/actions/actionTypes";
+import { gameCreated } from "../store/actions/game";
 import store from "../store/index";
 
 consumer.subscriptions.create("GameChannel", {

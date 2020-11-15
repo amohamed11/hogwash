@@ -24,8 +24,14 @@ export interface Game {
     done: boolean;
 }
 
+export interface Connection {
+    state: string;
+    session: string;
+}
+
+
 export interface GameState {
     game: Game;
     player: Player;
-    session: string;
+    connection: Connection;
 }

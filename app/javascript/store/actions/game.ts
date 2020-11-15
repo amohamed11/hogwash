@@ -1,5 +1,5 @@
 import * as ACTIONS from './actionTypes';
-import { Game } from '../models/index';
+import { Game } from '../../models/index';
 
 export const gameJoined = (game: Game) => {
   type: typeof ACTIONS.JOIN_GAME;

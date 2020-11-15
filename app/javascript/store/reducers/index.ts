@@ -1,10 +1,10 @@
-import * as ACTIONS from '../actionTypes';
-import { GameState, Game, Word, Player } from '../../models/index';
+import * as ACTIONS from '../actions/actionTypes';
+import { GameState, Game, Word, Player, Connection } from '../../models/index';
 
 const initialState: GameState = {
   game: null as Game,
   player: null as Player,
-  session: '',
+  connection: null as Connection,
 };
 
 function rootReducer(state = initialState, action) {
