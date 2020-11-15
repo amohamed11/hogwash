@@ -1,6 +1,5 @@
 import * as ACTIONS from '../actionTypes';
 import { GameState, Game, Word, Player } from '../../models/index';
-import '../../channels/game_channel.js';
 
 const initialState: GameState = {
   game: null as Game,
@@ -13,16 +12,15 @@ function rootReducer(state = initialState, action) {
     case ACTIONS.JOIN_GAME: {
       return {
         ...state,
-        game: action.payload.game,
-        player: action.payload.player_name,
-      };
+        game: action.payload
+      } as GameState;
     }
 
     case ACTIONS.CREATE_GAME: {
+      console.log("GAME CREATED");
       return {
         ...state,
-        game: action.payload.game,
-        player: action.payload.player_name,
+        game: action.payload.game as Game
       };
     }
 
@@ -30,16 +28,5 @@ function rootReducer(state = initialState, action) {
       return state;
   }
 }
-
-// game: {
-//   id: action.payload.id,
-//   room_code: action.payload.room_code,
-//   words: action.payload.words,
-//   players: action.payload.players
-// },
-// player: {
-// name: action.payload.player_name,
-// score: 0
-// }
 
 export default rootReducer;

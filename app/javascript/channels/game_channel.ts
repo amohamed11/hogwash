@@ -1,4 +1,7 @@
 import consumer from "./consumer"
+import { CREATE_GAME } from "../store/actionTypes";
+import { gameCreated } from "../store/actions";
+import store from "../store/index";
 
 consumer.subscriptions.create("GameChannel", {
   connected() {
@@ -13,7 +16,7 @@ consumer.subscriptions.create("GameChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
-    console.log(data);
+    store.dispatch({type: CREATE_GAME, payload: data});
   },
   
   joinGame(player_name, room_code) {
@@ -25,15 +28,14 @@ consumer.subscriptions.create("GameChannel", {
   },
 
   onAnswer(data)  {
-    let score = this.perform("onAnswer", data);
-    console.log(score);
+    this.perform("onAnswer", data);
   },
 
   onVote(data) {
     this.perform("onVote", data);
   },
 
-  onGameEnd() {
+  onGameEnd(data) {
     this.perform("onGameEnd", data);
   }
 

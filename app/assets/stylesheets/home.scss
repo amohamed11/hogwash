@@ -15,9 +15,13 @@
 }
 
 .join-input-group {
-  max-width: 400px;
+  float: left;
+  max-width: 300px;
+  padding: 0 5vw;
 }
 
 .create-select-group {
-  max-width: 100px;
+  float: right;
+  max-width: 250px;
+  padding-right: 5vw;
 }

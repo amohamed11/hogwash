@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import Home from '../pages/Home';
 import store from '../store/index';
+import { ActionCableContext } from "../services/CableContext";
 
-interface IProps {
-  cable: any;
-}
+import consumer from "../channels/consumer";
+import "../channels/index";
 
-export const App: React.FC<IProps> = (props) => {
+const cable = consumer.subscriptions.subscriptions[0];
+
+export const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <Switch>
-          <Route path="/">
-            <Home />{' '}
-          </Route>
-        </Switch>
-      </BrowserRouter>
+      <ActionCableContext.Provider value={cable}>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/">
+              <Home />{' '}
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </ActionCableContext.Provider>
     </Provider>
   );
 };

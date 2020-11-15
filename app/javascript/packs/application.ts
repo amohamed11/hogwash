@@ -20,12 +20,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from '../pages/App';
-import consumer from "../channels/consumer";
-import "../channels/index";
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    App({cable: consumer.subscriptions.subscriptions[0]}),
+    App(null),
     document.querySelector('#root'),
   );
 });
