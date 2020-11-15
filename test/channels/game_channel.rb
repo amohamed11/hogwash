@@ -6,11 +6,12 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :createGame, creator_name: "TestCreator", word_count: 5
 
         game = Game.last
+        gameJson = game.as_json(include: [:words, :players])
 
         assert subscription.confirmed?
         assert_equal game.room_code.length, 5
         assert_equal game.words.count, 5
-        assert_broadcast_on(game, words: game.words.as_json)
+        assert_broadcast_on(game, game: gameJson)
     end
 
     test "subscribes and join a game" do
@@ -18,12 +19,13 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :joinGame, player_name: "TestPlayer", room_code: "12345"
 
         game = Game.find_by(room_code: "12345")
+        gameJson = game.as_json(include: [:words, :players])
         player = Player.last
 
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
         assert_equal player.game_id, game.id
-        assert_broadcast_on(game, words: game.words.as_json)
+        assert_broadcast_on(game, game: gameJson)
      end
 
     test "player answers incorrectly getting score of 0" do

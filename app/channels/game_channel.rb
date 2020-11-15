@@ -4,7 +4,7 @@ class GameChannel < ApplicationCable::Channel
   end
   def joinGame(data)
     game = @gameHandler.join(data["player_name"], data["room_code"])
-    gameJson = game.as_json(include: :words)
+    gameJson = game.as_json(include: [:words, :players])
     stream_for game
     broadcast_to game, game: gameJson
   end
