@@ -19,7 +19,7 @@ require("channels")
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from '../components/App';
+import App from '../pages/App';
 import consumer from "../channels/consumer";
 import "../channels/index";
 

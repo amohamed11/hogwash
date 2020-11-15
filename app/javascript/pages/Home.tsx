@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 import { Button } from '@jobber/components/Button';
 import { Content } from '@jobber/components/Content';
 import { InputText } from '@jobber/components/InputText';
@@ -10,11 +11,16 @@ import { Divider } from '@jobber/components/Divider';
 import { Text } from '@jobber/components/Text';
 import { useFormState } from '@jobber/hooks';
 
-interface IProps {
-  cable: any;
+import { joinGame, createGame } from "../store/actions";
+
+const dispatch = useDispatch();
+
+const mapDispatchToProps = { 
+  joinGame: (game) => dispatch(joinGame(game)), 
+  createGame: (game) => dispatch(createGame(game))
 }
 
-const Home: React.FC<IProps> = (props) => {
+const Home: React.FC = (props, mapDispatchToProps) => {
   const [word_count, setWordCount] = React.useState(6);
   const [room_code, setRoomCode] = React.useState('');
   const [player_name, setPlayerName] = React.useState('');
@@ -93,13 +99,16 @@ const Home: React.FC<IProps> = (props) => {
     </div>
   );
 
-  function joinGame(room_code: string) {
-    props.cable.joinGame(room_code);
+  function joinGame() {
+    mapDispatchToProps.joinGame(player_name);
   }
 
-  function createGame(word_count: number) {
-    props.cable.createGame(word_count);
+  function createGame() {
+    mapDispatchToProps.createGame(player_name);
   }
 };
 
-export default Home;
+export default connect(
+  null,
+  mapDispatchToProps
+)(Home);

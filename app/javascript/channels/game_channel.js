@@ -13,14 +13,15 @@ consumer.subscriptions.create("GameChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
+    console.log(data);
   },
   
-  joinGame(data) {
-    this.perform("joinGame", data);
+  joinGame(player_name, room_code) {
+    this.perform("joinGame", {"player_name": player_name, "room_code": room_code});
   },
 
-  createGame(data) {
-    this.perform("createGame", data);
+  createGame(player_name, word_count) {
+    this.perform("createGame", {"player_name": player_name, "word_count": word_count});
   },
 
   onAnswer(data)  {
