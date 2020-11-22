@@ -6,14 +6,14 @@ class GameChannel < ApplicationCable::Channel
     game = @gameHandler.join(data["player_name"], data["room_code"])
     gameJson = game.as_json(include: [:words, :players])
     stream_for game
-    broadcast_to game, game: gameJson
+    broadcast_to game, { game: gameJson, type: "GAME_JOINED" }
   end
 
   def createGame(data)
     game = @gameHandler.create(data["creator_name"], data["word_count"])
     gameJson = game.as_json(include: [:words, :players])
     stream_for game
-    broadcast_to game, game: gameJson
+    broadcast_to game, { game: gameJson, type: "GAME_CREATED" }
   end
 
   def onAnswer(data)
@@ -34,8 +34,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def onGameEnd(data)
-    @gameHandler.selectWinner()
-    @gameHandler.deleteGame()
+    @gameHandler.endGame()
+  end
+
+  def onGameRoomClose(data)
+    @gameHandler.closeGameRoom()
   end
   
 end

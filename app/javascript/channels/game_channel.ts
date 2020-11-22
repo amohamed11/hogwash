@@ -1,8 +1,4 @@
 import consumer from "./consumer"
-import { CREATE_GAME } from "../store/actions/actionTypes";
-import { gameCreated } from "../store/actions/game";
-import store from "../store/index";
-
 consumer.subscriptions.create("GameChannel", {
   connected() {
     // Called when the subscription is ready for use on the server
@@ -16,7 +12,7 @@ consumer.subscriptions.create("GameChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
-    store.dispatch({type: CREATE_GAME, payload: data});
+    console.log(data);
   },
   
   joinGame(player_name, room_code) {

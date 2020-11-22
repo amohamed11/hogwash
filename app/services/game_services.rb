@@ -55,7 +55,7 @@ module GameServices
       player.score += score
       player.save
 
-      GameChannel.broadcast_to @game, score: score
+      GameChannel.broadcast_to @game, { score: score, type: "GAME_PLAYER_ANSWER" }
     end
 
     def handleVote(player_id, word, answer, voted_for_id)
@@ -74,20 +74,22 @@ module GameServices
 
       scores = {player.id => player.score, voted_for_player.id => voted_for_player.score}
 
-      GameChannel.broadcast_to @game, scores: scores
+      GameChannel.broadcast_to @game, { scores: scores, type: "GAME_PLAYER_VOTE" }
     end
 
-    def selectWinner()
+    def endGame()
       players = @game.players
       winner = players.order('score DESC').first
 
       @game.winner = winner
       @game.save
 
-      GameChannel.broadcast_to @game, winner: winner
+      GameChannel.broadcast_to @game, { winner: winner, type: "GAME_ENDED" }
     end
 
-    def deleteGame()
+    def closeGameRoom()
+      GameChannel.broadcast_to @game, { type: "GAME_CLOSED" }
+
       Game.destroy(@game)
     end
   end

@@ -23,15 +23,3 @@ export interface Game {
     players: Player[];
     done: boolean;
 }
-
-export interface Connection {
-    state: string;
-    session: string;
-}
-
-
-export interface GameState {
-    game: Game;
-    player: Player;
-    connection: Connection;
-}

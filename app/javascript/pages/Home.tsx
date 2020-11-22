@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { Button } from '@jobber/components/Button';
 import { Content } from '@jobber/components/Content';
@@ -12,20 +12,29 @@ import { Divider } from '@jobber/components/Divider';
 import { Text } from '@jobber/components/Text';
 import { useFormState } from '@jobber/hooks';
 
-import { ActionCableContext } from '../services/CableContext';
-import { GameState } from '../models';
+import { ActionCableContext } from "../services/CableContext";
+import { Game } from '../models';
 
-const Home: React.FC = (props, mapStateToProps) => {
+const mapStateToProps = state => {
+  return {
+    game: state.game as Game
+  }
+};
+
+type Props = ReturnType<typeof mapStateToProps>;
+
+const Home: React.FC<Props> = (props) => {
   const [word_count, setWordCount] = React.useState(6);
   const [room_code, setRoomCode] = React.useState('');
   const [player_name, setPlayerName] = React.useState('');
 
   const [{ isDirty, isValid }, setFormState] = useFormState();
-  const history = useHistory();
 
   const cable = useContext(ActionCableContext);
-  
-  const game = useSelector<GameState>(state => state.game); 
+
+  if (props.game && props.game.room_code) {
+    return <Redirect push to={"/game/"+props.game.room_code} />;
+  }
 
   return (
     <div className="home center">
@@ -54,7 +63,7 @@ const Home: React.FC = (props, mapStateToProps) => {
 
         <div className="join-input-group  center">
           <Heading level={5}>Join a game</Heading>
-          <Form onSubmit={() => joinGame(room_code)} onStateChange={setFormState}>
+          <Form onSubmit={() => joinGame(player_name, room_code)} onStateChange={setFormState}>
             <Content>
                 <Content>
                   <InputText
@@ -80,7 +89,7 @@ const Home: React.FC = (props, mapStateToProps) => {
 
         <div className="create-select-group  center">
           <Heading level={5}>Create a game</Heading>
-          <Form onSubmit={() => joinGame(room_code)} onStateChange={setFormState}>
+          <Form onSubmit={() => createGame(player_name, word_count)} onStateChange={setFormState}>
             <Content>
                 <Content>
                   <Select
@@ -94,7 +103,7 @@ const Home: React.FC = (props, mapStateToProps) => {
                   </Select>
                 </Content>
               <Text>Select how many words to be in the game.</Text>
-              <Button label="Create" type="primary" onClick={() => createGame(word_count)} />
+              <Button label="Create" type="primary" submit={true} />
             </Content>
           </Form>
         </div>
@@ -103,16 +112,16 @@ const Home: React.FC = (props, mapStateToProps) => {
     </div>
   );
 
-  function joinGame(room_code: string) {
-    // cable.joinGame(player_name, room_code);
+  function joinGame(player_name: string, room_code: string) {
+    cable.perform("joinGame", {player_name: player_name, room_code: room_code});
   }
 
-  async function createGame(word_count: number) {
-    // cable.createGame(player_name, word_count);
-    // await new Promise(r => setTimeout(r, 200));
-    console.log(game);
-    // history.push("game/"+gameState.game.room_code);
+  async function createGame(player_name: string, word_count: number) {
+    cable.perform("createGame", {player_name: player_name, word_count: word_count});
   }
 };
 
-export default Home;
+export default connect(
+  mapStateToProps,
+  null
+)(Home);

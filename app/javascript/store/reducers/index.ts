@@ -1,32 +1,38 @@
 import * as ACTIONS from '../actions/actionTypes';
-import { GameState, Game, Word, Player, Connection } from '../../models/index';
+import { Game, Player } from '../../models/index';
+import { RootState } from './state';
 
-const initialState: GameState = {
+// Initial Store State
+var initialState: RootState = {
   game: null as Game,
   player: null as Player,
-  connection: null as Connection,
+  connected: false
 };
 
-function rootReducer(state = initialState, action) {
-  switch (action.type) {
-    case ACTIONS.JOIN_GAME: {
-      return {
-        ...state,
-        game: action.payload
-      } as GameState;
-    }
+// Redux Reducer function
+export default function reducer(state = initialState, action) {
 
-    case ACTIONS.CREATE_GAME: {
-      console.log("GAME CREATED");
+  switch (action.type) {
+    case 'CABLECAR_CONNECTED':
       return {
         ...state,
-        game: action.payload.game as Game
+        connected: true
       };
-    }
+
+    case 'CABLECAR_DISCONNECTED':
+      return {
+        ...state,
+        connected: false
+      };
+
+    case ACTIONS.GAME_CREATED || ACTIONS.GAME_JOINED:
+      return {
+        ...state,
+        game: action.game,
+        player: action.player
+      };
 
     default:
-      return state;
+      return state
   }
 }
-
-export default rootReducer;
