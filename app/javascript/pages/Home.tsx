@@ -32,7 +32,7 @@ const Home: React.FC<Props> = (props) => {
 
   const cable = useContext(ActionCableContext);
 
-  if (props.game && props.game.room_code) {
+  if (props.game) {
     return <Redirect push to={"/game/"+props.game.room_code} />;
   }
 
