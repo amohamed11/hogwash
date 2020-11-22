@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { Content } from '@jobber/components/Content';
 import { Heading } from '@jobber/components/Heading';
 
+import WordList from "../components/WordList";
 import { ActionCableContext } from "../services/CableContext";
 import { Game } from '../models';
 
@@ -28,7 +29,8 @@ const Game: React.FC<Props> = (props) => {
       <Content spacing="large">
         <Heading level={1}>Hogwash</Heading>
         <Content>
-          <Heading level={2}>Room Code: {props.game.room_code}</Heading> 
+          <Heading level={2}>Room Code: {props.game.room_code}</Heading>
+          <WordList words={props.game.words}/>
         </Content>
       </Content>
     </div>
