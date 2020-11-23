@@ -4,6 +4,7 @@ export interface Player {
     updated_at: string;
     name: string;
     score: number;
+    isCreator: boolean;
 }
 
 export interface Word {
