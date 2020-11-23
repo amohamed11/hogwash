@@ -3,11 +3,13 @@ testCreator:
   name: "TestCreator"
   score: 0
   game_id: 1
+  isCreator: true
 
 testPlayer:
   id: 2
   name: "TestPlayer"
   score: 0
   game_id: 1
+  isCreator: false
 
 

@@ -3,17 +3,23 @@ class GameChannel < ApplicationCable::Channel
     @gameHandler = GameServices::GameHandler.new
   end
   def joinGame(data)
-    game = @gameHandler.join(data["player_name"], data["room_code"])
+    game, player = @gameHandler.join(data["player_name"], data["room_code"])
+
     gameJson = game.as_json(include: [:words, :players])
+    playerJson = player.as_json
+
     stream_for game
-    broadcast_to game, { game: gameJson, type: ActionTypes::GAME_JOINED }
+    broadcast_to game, { game: gameJson, player: playerJson, type: ActionTypes::GAME_JOINED }
   end
 
   def createGame(data)
-    game = @gameHandler.create(data["player_name"], data["word_count"])
+    game, player = @gameHandler.create(data["player_name"], data["word_count"])
+
     gameJson = game.as_json(include: [:words, :players])
+    playerJson = player.as_json
+
     stream_for game
-    broadcast_to game, { game: gameJson, type: ActionTypes::GAME_CREATED }
+    broadcast_to game, { game: gameJson, player: playerJson, type: ActionTypes::GAME_CREATED }
   end
 
   def onAnswer(data)

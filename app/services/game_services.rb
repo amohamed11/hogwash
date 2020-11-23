@@ -6,17 +6,18 @@ module GameServices
 
     def join(name, room_code)
       @game = Game.find_by(room_code: room_code)
+
       if @game.nil?
         return nil
       end
 
-      Player.create(name: name, game: @game)
-      @game.reload
+      player = Player.create(name: name, game: @game)
+      @game.players.reload
 
-      return @game
+      return @game, player
     end
 
-    def create(player_name, word_count)
+    def create(name, word_count)
       room_code = SecureRandom.alphanumeric(5).upcase
 
       word_count = word_count.to_i
@@ -35,10 +36,10 @@ module GameServices
 
       @game.save
 
-      creator = Player.create(name: player_name, isCreator: true, game: @game)
+      player = Player.create(name: name, isCreator: true, game: @game)
       @game.players.reload
 
-      return @game
+      return @game, player
     end
 
     def handleAnswer(player_id, word, answer)

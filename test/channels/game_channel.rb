@@ -3,15 +3,19 @@ require 'test_helper'
 class GameChannelTest < ActionCable::Channel::TestCase
     test "subscribes and create a game" do
         subscribe 
-        perform :createGame, creator_name: "TestCreator", word_count: 5
+        perform :createGame, player_name: "TestCreator", word_count: 5
 
         game = Game.last
         gameJson = game.as_json(include: [:words, :players])
 
+        creator = game.players.first
+        creatorJson = creator.as_json
+
         assert subscription.confirmed?
         assert_equal game.room_code.length, 5
         assert_equal game.words.count, 5
-        assert_broadcast_on(game, { game: gameJson, type: ActionTypes::GAME_CREATED })
+        assert_equal creator.isCreator, true
+        assert_broadcast_on(game, { game: gameJson, player: creator, type: ActionTypes::GAME_CREATED })
     end
 
     test "subscribes and join a game" do
@@ -20,17 +24,18 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         game = Game.find_by(room_code: "12345")
         gameJson = game.as_json(include: [:words, :players])
-        player = Player.last
+
+        player = game.players.last
+        playerJson = player.as_json
 
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
-        assert_equal player.game_id, game.id
-        assert_broadcast_on(game, { game: gameJson, type: ActionTypes::GAME_JOINED })
+        assert_broadcast_on(game, { game: gameJson, player: playerJson, type: ActionTypes::GAME_JOINED })
      end
 
     test "player answers incorrectly getting score of 0" do
         subscribe
-        perform :createGame, creator_name: "TestCreator", word_count: 5
+        perform :createGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
         perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
@@ -47,7 +52,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player answers correctly getting score of 3" do
         subscribe
-        perform :createGame, creator_name: "TestCreator", word_count: 5
+        perform :createGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
         perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
@@ -64,7 +69,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player votes incorrectly, voted for player gets score + 1" do
         subscribe
-        perform :createGame, creator_name: "TestCreator", word_count: 5
+        perform :createGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
         perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
@@ -82,7 +87,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player votes correctly, gets score + 2" do
         subscribe
-        perform :createGame, creator_name: "TestCreator", word_count: 5
+        perform :createGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
         perform :joinGame, player_name: "TestPlayer", room_code: game.room_code

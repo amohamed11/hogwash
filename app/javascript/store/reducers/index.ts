@@ -24,11 +24,12 @@ export default function reducer(state = initialState, action) {
         connected: false,
       };
 
-    case ACTIONS.GAME_CREATED || ACTIONS.GAME_JOINED:
+    case ACTIONS.GAME_CREATED:
+    case ACTIONS.GAME_JOINED:
       return {
         ...state,
         game: action.game,
-        player: action.player,
+        player: action.player
       };
 
     default:
