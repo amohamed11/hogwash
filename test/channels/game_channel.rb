@@ -1,9 +1,9 @@
 require 'test_helper'
  
 class GameChannelTest < ActionCable::Channel::TestCase
-    test "subscribes and create a game" do
+    test "subscribes and create a game, try to start & fail" do
         subscribe 
-        perform :createGame, player_name: "TestCreator", word_count: 5
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
 
         game = Game.last
         gameJson = game.as_json(include: [:words, :players])
@@ -15,12 +15,15 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert_equal game.room_code.length, 5
         assert_equal game.words.count, 5
         assert_equal creator.isCreator, true
-        assert_broadcast_on(game, { game: gameJson, player: creator, type: ActionTypes::GAME_CREATED })
+        assert_broadcast_on(game, { game: gameJson, player: creator, type: Constants::ActionTypes::GAME_CREATED })
+        assert_broadcast_on(game, { error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED }) do
+          perform :startGame
+        end
     end
 
-    test "subscribes and join a game" do
+    test "subscribes and join a game, creator starts game" do
         subscribe 
-        perform :joinGame, player_name: "TestPlayer", room_code: "12345"
+        perform :onJoinGame, player_name: "TestPlayer", room_code: "12345"
 
         game = Game.find_by(room_code: "12345")
         gameJson = game.as_json(include: [:words, :players])
@@ -30,15 +33,18 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
-        assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: ActionTypes::GAME_JOINED })
+        assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: Constants::ActionTypes::GAME_JOINED })
+        assert_broadcast_on(game, { error: nil, type: Constants::ActionTypes::GAME_STARTED }) do
+          perform :startGame
+        end
      end
 
     test "player answers incorrectly getting score of 0" do
         subscribe
-        perform :createGame, player_name: "TestCreator", word_count: 5
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
-        perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         word = game.words.first
 
@@ -52,10 +58,10 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player answers correctly getting score of 3" do
         subscribe
-        perform :createGame, player_name: "TestCreator", word_count: 5
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
-        perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         word = game.words.first
 
@@ -70,10 +76,10 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player votes incorrectly, voted for player gets score + 1" do
         subscribe
-        perform :createGame, player_name: "TestCreator", word_count: 5
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
-        perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
         word = game.words.first
@@ -90,10 +96,10 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
     test "player votes correctly, gets score + 2" do
         subscribe
-        perform :createGame, player_name: "TestCreator", word_count: 5
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
         game = Game.last
 
-        perform :joinGame, player_name: "TestPlayer", room_code: game.room_code
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
         word = game.words.first

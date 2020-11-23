@@ -113,11 +113,11 @@ const Home: React.FC<Props> = (props) => {
   );
 
   function joinGame(player_name: string, room_code: string) {
-    cable.perform("joinGame", {player_name: player_name, room_code: room_code});
+    cable.perform("onJoinGame", {player_name: player_name, room_code: room_code});
   }
 
-  async function createGame(player_name: string, word_count: number) {
-    cable.perform("createGame", {player_name: player_name, word_count: word_count});
+  function createGame(player_name: string, word_count: number) {
+    cable.perform("onCreateGame", {player_name: player_name, word_count: word_count});
   }
 };
 

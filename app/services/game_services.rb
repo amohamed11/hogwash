@@ -9,12 +9,12 @@ module GameServices
       error = nil
 
       if @game.nil?
-        error = ErrorMessages::GAME_NOT_FOUND
+        error = Constants::ErrorMessages::GAME_NOT_FOUND
         return nil, nil, error
       end
 
       if @game.players.count == 6
-        error = ErrorMessages::LOBBY_FULL
+        error = Constants::ErrorMessages::LOBBY_FULL
         return nil, nil, error
       end
 
@@ -49,6 +49,16 @@ module GameServices
       return @game, player
     end
 
+    def start()
+      error = nil
+
+      if @game.players.count < 2
+        error = Constants::ErrorMessages::LOBBY_TOO_SMALL
+      end
+
+      GameChannel.broadcast_to @game, { error: error, type: Constants::ActionTypes::GAME_STARTED }
+    end
+
     def handleAnswer(player_id, word, answer)
       player = @game.players.find(player_id)
       word = @game.words.find_by(word: word)
@@ -78,7 +88,7 @@ module GameServices
     end
 
     def endRound()
-      GameChannel.broadcast_to @game, { game: @game, type: ActionTypes::GAME_ROUND_ENDED }
+      GameChannel.broadcast_to @game, { game: @game, type: Constants::ActionTypes::GAME_ROUND_ENDED }
     end
 
     def endGame()
@@ -88,11 +98,11 @@ module GameServices
       @game.winner = winner
       @game.save
 
-      GameChannel.broadcast_to @game, { winner: winner, type: ActionTypes::GAME_ENDED }
+      GameChannel.broadcast_to @game, { winner: winner, type: Constants::ActionTypes::GAME_ENDED }
     end
 
     def closeGameRoom()
-      GameChannel.broadcast_to @game, { type: ActionTypes::GAME_CLOSED }
+      GameChannel.broadcast_to @game, { type: Constants::ActionTypes::GAME_CLOSED }
 
       Game.destroy(@game)
     end

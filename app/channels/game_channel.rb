@@ -2,7 +2,7 @@ class GameChannel < ApplicationCable::Channel
   def subscribed
     @gameHandler = GameServices::GameHandler.new
   end
-  def joinGame(data)
+  def onJoinGame(data)
     game, player, error = @gameHandler.join(data["player_name"], data["room_code"])
 
     if error.nil?
@@ -11,17 +11,21 @@ class GameChannel < ApplicationCable::Channel
     end
 
     stream_for game
-    broadcast_to game, { game: gameJson, player: playerJson, error: error, type: ActionTypes::GAME_JOINED }
+    broadcast_to game, { game: gameJson, player: playerJson, error: error, type: Constants::ActionTypes::GAME_JOINED }
   end
 
-  def createGame(data)
+  def onCreateGame(data)
     game, player = @gameHandler.create(data["player_name"], data["word_count"])
 
     gameJson = game.as_json(include: [:words, :players])
     playerJson = player.as_json
 
     stream_for game
-    broadcast_to game, { game: gameJson, player: playerJson, type: ActionTypes::GAME_CREATED }
+    broadcast_to game, { game: gameJson, player: playerJson, type: Constants::ActionTypes::GAME_CREATED }
+  end
+
+  def startGame()
+    @gameHandler.start()
   end
 
   def onAnswer(data)
@@ -41,6 +45,10 @@ class GameChannel < ApplicationCable::Channel
     )
   end
 
+  def onRoundEnd()
+    @gameHandler.endRound()
+  end
+
   def onGameEnd(data)
     @gameHandler.endGame()
   end
@@ -48,5 +56,4 @@ class GameChannel < ApplicationCable::Channel
   def onGameRoomClose(data)
     @gameHandler.closeGameRoom()
   end
-  
 end
