@@ -53,8 +53,6 @@ module GameServices
 
       player.score += score
       player.save
-
-      GameChannel.broadcast_to @game, { score: score, type: ActionTypes::GAME_PLAYER_ANSWER }
     end
 
     def handleVote(player_id, word, answer, voted_for_id)
@@ -70,10 +68,10 @@ module GameServices
 
       player.save
       voted_for_player.save
+    end
 
-      scores = {player.id => player.score, voted_for_player.id => voted_for_player.score}
-
-      GameChannel.broadcast_to @game, { scores: scores, type: ActionTypes::GAME_PLAYER_VOTE }
+    def endRound()
+      GameChannel.broadcast_to @game, { game: @game, type: ActionTypes::GAME_ROUND_ENDED }
     end
 
     def endGame()
