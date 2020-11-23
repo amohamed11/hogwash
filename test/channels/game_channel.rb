@@ -30,7 +30,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
-        assert_broadcast_on(game, { game: gameJson, player: playerJson, type: ActionTypes::GAME_JOINED })
+        assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: ActionTypes::GAME_JOINED })
      end
 
     test "player answers incorrectly getting score of 0" do

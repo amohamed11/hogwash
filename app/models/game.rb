@@ -6,4 +6,5 @@ class Game < ApplicationRecord
 
     validates :room_code, presence: true, uniqueness: true
     validates :words, presence: true
+    validates_length_of :players, maximum: 6
 end

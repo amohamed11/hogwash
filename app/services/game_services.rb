@@ -6,15 +6,22 @@ module GameServices
 
     def join(name, room_code)
       @game = Game.find_by(room_code: room_code)
+      error = nil
 
       if @game.nil?
-        return nil
+        error = ErrorMessages::GAME_NOT_FOUND
+        return nil, nil, error
+      end
+
+      if @game.players.count == 6
+        error = ErrorMessages::LOBBY_FULL
+        return nil, nil, error
       end
 
       player = Player.create(name: name, game: @game)
       @game.players.reload
 
-      return @game, player
+      return @game, player, error
     end
 
     def create(name, word_count)
