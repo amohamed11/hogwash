@@ -2,7 +2,7 @@ require 'test_helper'
  
 class GameChannelTest < ActionCable::Channel::TestCase
     test "subscribes and create a game, try to start & fail" do
-        subscribe 
+        subscribe
         perform :onCreateGame, player_name: "TestCreator", word_count: 5
 
         game = Game.last
@@ -18,17 +18,20 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert_broadcast_on(game, { game: gameJson, player: creator, type: Constants::ActionTypes::GAME_CREATED })
         assert_broadcast_on(game, { error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED }) do
           perform :startGame
+          game.reload
         end
+        assert_equal game.started, false
     end
 
     test "subscribes and join a game, creator starts game" do
-        subscribe 
-        perform :onJoinGame, player_name: "TestPlayer", room_code: "12345"
+        subscribe
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
+        game = Game.last
 
-        game = Game.find_by(room_code: "12345")
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
+
+        player = game.players.find_by(name: "TestPlayer")
         gameJson = game.as_json(include: [:words, :players])
-
-        player = game.players.last
         playerJson = player.as_json
 
         assert subscription.confirmed?
@@ -36,7 +39,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: Constants::ActionTypes::GAME_JOINED })
         assert_broadcast_on(game, { error: nil, type: Constants::ActionTypes::GAME_STARTED }) do
           perform :startGame
+          game.reload
         end
+        assert_equal game.started, true
      end
 
     test "player answers incorrectly getting score of 0" do

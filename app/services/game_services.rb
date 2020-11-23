@@ -54,6 +54,8 @@ module GameServices
 
       if @game.players.count < 2
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
+      else
+        @game.update(started: true)
       end
 
       GameChannel.broadcast_to @game, { error: error, type: Constants::ActionTypes::GAME_STARTED }
