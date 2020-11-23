@@ -6,7 +6,7 @@ import { Content } from '@jobber/components/Content';
 import { Heading } from '@jobber/components/Heading';
 import { showToast } from '@jobber/components/Toast';
 
-import WordList from "../components/WordList";
+import WordCard from "../components/WordCard";
 import GameLobby from "../components/GameLobby";
 import { ActionCableContext } from "../services/CableContext";
 import { Game, Player } from '../models';
@@ -33,7 +33,7 @@ const Game: React.FC<Props> = (props) => {
   } else {
     gameScreen = (
       <Content>
-        <WordList words={props.game.words}/>
+        <WordCard word={props.game.currentWord}/>
       </Content>
     )
   }

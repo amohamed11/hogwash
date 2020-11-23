@@ -51,9 +51,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
-        word = game.words.first
+        wordText = game.currentWord
 
-        perform :onAnswer, player_id: player.id, word: word.word, answer: "totoro"
+        perform :onAnswer, player_id: player.id, word: word, answer: "totoro"
         player.reload
 
         assert subscription.confirmed?
@@ -68,9 +68,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
-        word = game.words.first
+        word = game.currentWord
 
-        perform :onAnswer, player_id: player.id, word: word.word, answer: word.definition
+        perform :onAnswer, player_id: player.id, word: word
         player.reload
 
 
@@ -87,9 +87,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
-        word = game.words.first
+        word = game.currentWord
 
-        perform :onVote, player_id: player.id, word: word.word, answer: "totoro", voted_for_id: voted_for.id
+        perform :onVote, player_id: player.id, word: word, answer: "totoro", voted_for_id: voted_for.id
         player.reload
         voted_for.reload
 
@@ -107,11 +107,33 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
-        word = game.words.first
+        word = game.currentWord
 
-        perform :onVote, player_id: player.id, word: word.word, answer: word.definition, voted_for_id: voted_for.id
+        perform :onVote, player_id: player.id, word: word, voted_for_id: voted_for.id
         player.reload
         voted_for.reload
+
+        assert subscription.confirmed?
+        assert_has_stream_for game
+        assert_equal player.score, 2
+        assert_equal voted_for.score, 0
+    end
+
+    test "players vote, then next word is chosen" do
+        subscribe
+        perform :onCreateGame, player_name: "TestCreator", word_count: 5
+        game = Game.last
+
+        perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
+        player = game.players.find_by(name: "TestPlayer")
+        voted_for = game.players.where.not(name: "TestPlayer").first
+        word = game.currentWord
+
+        perform :onVote, player_id: player.id, word: word, voted_for_id: voted_for.id
+        player.reload
+        voted_for.reload
+
+        perform :onNextWord
 
         assert subscription.confirmed?
         assert_has_stream_for game

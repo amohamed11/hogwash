@@ -2,24 +2,22 @@ import React from 'react';
 
 import { Content } from '@jobber/components/Content';
 import { Card } from '@jobber/components/Card';
-import { Text } from '@jobber/components/Text';
-
-import { Word } from '../models';
+import { Heading } from '@jobber/components/Heading';
 
 type Props = {
-  word: Word;
+  word: string;
 };
 
 const WordCard: React.FC<Props> = (props) => {
   return (
     <div className="word-card">
-      <Card title={props.word.word}>
-        <Content spacing="large">
-          <Text>
-            {props.word.definition}
-          </Text>
-        </Content>
-      </Card>
+      <Content spacing="large">
+        <Card>
+          <Heading level={4}>
+            {props.word}
+          </Heading>
+        </Card>
+      </Content>
     </div>
   );
 };

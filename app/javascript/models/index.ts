@@ -7,20 +7,11 @@ export interface Player {
     isCreator: boolean;
 }
 
-export interface Word {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    word: string;
-    definition: string;
-}
-
 export interface Game {
     id: number;
     created_at: string;
     updated_at: string;
     room_code: string;
-    words: Word[];
     currentWord: string;
     players: Player[];
     done: boolean;

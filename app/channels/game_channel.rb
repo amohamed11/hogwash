@@ -31,7 +31,6 @@ class GameChannel < ApplicationCable::Channel
   def onAnswer(data)
     @gameHandler.handleAnswer(
       data["player_id"],
-      data["word"],
       data["answer"]
     )
   end
@@ -39,10 +38,13 @@ class GameChannel < ApplicationCable::Channel
   def onVote(data)
     @gameHandler.handleVote(
       data["player_id"],
-      data["word"],
-      data["answer"],
+      data["voted_for_definition"],
       data["voted_for_id"]
     )
+  end
+
+  def onNextWord()
+    @gameHandler.nextWord()
   end
 
   def onGameRoomClose(data)

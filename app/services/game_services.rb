@@ -57,17 +57,15 @@ module GameServices
       else
         firstWord = @game.words[0]
         @game.update(started: true)
-        @game.currentWord = firstWord
-        @game.save
-        @game.reload
+        @game.update(currentWord: firstWord)
       end
 
       GameChannel.broadcast_to @game, { started: @game.started, error: error, type: Constants::ActionTypes::GAME_STARTED }
     end
 
-    def handleAnswer(player_id, word, answer)
+    def handleAnswer(player_id, answer)
       player = @game.players.find(player_id)
-      word = @game.words.find_by(word: word)
+      word = @game.words.find_by(word: @game.currentWord)
       score = 0
 
       if answer == word.definition
@@ -78,12 +76,12 @@ module GameServices
       player.save
     end
 
-    def handleVote(player_id, word, answer, voted_for_id)
+    def handleVote(player_id, voted_for_definition, voted_for_id)
       player = @game.players.find(player_id)
       voted_for_player = @game.players.find(voted_for_id)
-      word = @game.words.find_by(word: word)
+      word = @game.words.find_by(word: @game.currentWord)
 
-      if answer == word.definition
+      if voted_for_definition == word.definition
         player.score += 2
       else
         voted_for_player.score += 1
@@ -94,7 +92,8 @@ module GameServices
     end
 
     def nextWord()
-      index = @game.words.index(@game.currentWord)
+      currentWord = @game.words.find_by(word: @game.currentWord)
+      index = @game.words.index(currentWord)
       if index >= @game.word.count
         endGame()
       else
@@ -110,10 +109,9 @@ module GameServices
       players = @game.players
       winner = players.order('score DESC').first
 
-      @game.winner = winner
-      @game.save
+      @game.update(winner: winner)
 
-      GameChannel.broadcast_to @game, { winner: winner, type: Constants::ActionTypes::GAME_ENDED }
+      GameChannel.broadcast_to @game, { game: @game, type: Constants::ActionTypes::GAME_ENDED }
     end
 
     def closeGameRoom()
