@@ -24,7 +24,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to game, { game: gameJson, player: playerJson, type: Constants::ActionTypes::GAME_CREATED }
   end
 
-  def startGame()
+  def onGameStart()
     @gameHandler.start()
   end
 

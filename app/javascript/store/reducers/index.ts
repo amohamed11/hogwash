@@ -7,6 +7,7 @@ var initialState: RootState = {
   game: null as Game,
   player: null as Player,
   connected: false,
+  error: null
 };
 
 // Redux Reducer function
@@ -26,10 +27,22 @@ export default function reducer(state = initialState, action) {
 
     case ACTIONS.GAME_CREATED:
     case ACTIONS.GAME_JOINED:
+      const player: Player = state.player || action.player;
       return {
         ...state,
         game: action.game,
-        player: action.player
+        player: player,
+        error: action.error
+      };
+
+    case ACTIONS.GAME_STARTED:
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          started: action.started
+        },
+        error: action.error
       };
 
     default:

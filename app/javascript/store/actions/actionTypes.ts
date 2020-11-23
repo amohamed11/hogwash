@@ -1,5 +1,6 @@
 export const GAME_JOINED = 'GAME_JOINED';
 export const GAME_CREATED = 'GAME_CREATED';
+export const GAME_STARTED = 'GAME_STARTED';
 export const GAME_PLAYER_ANSWER = 'GAME_PLAYER_ANSWER';
 export const GAME_PLAYER_VOTE = 'GAME_PLAYER_VOTE';
 export const GAME_ENDED = 'GAME_ENDED';

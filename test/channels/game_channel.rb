@@ -16,8 +16,8 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert_equal game.words.count, 5
         assert_equal creator.isCreator, true
         assert_broadcast_on(game, { game: gameJson, player: creator, type: Constants::ActionTypes::GAME_CREATED })
-        assert_broadcast_on(game, { error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED }) do
-          perform :startGame
+        assert_broadcast_on(game, { started: false, error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED }) do
+          perform :onGameStart
           game.reload
         end
         assert_equal game.started, false
@@ -37,8 +37,8 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
         assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: Constants::ActionTypes::GAME_JOINED })
-        assert_broadcast_on(game, { error: nil, type: Constants::ActionTypes::GAME_STARTED }) do
-          perform :startGame
+        assert_broadcast_on(game, { started: true, error: nil, type: Constants::ActionTypes::GAME_STARTED }) do
+          perform :onGameStart
           game.reload
         end
         assert_equal game.started, true

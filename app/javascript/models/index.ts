@@ -23,4 +23,5 @@ export interface Game {
     words: Word[];
     players: Player[];
     done: boolean;
+    started: boolean;
 }

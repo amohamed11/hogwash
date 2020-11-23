@@ -58,7 +58,7 @@ module GameServices
         @game.update(started: true)
       end
 
-      GameChannel.broadcast_to @game, { error: error, type: Constants::ActionTypes::GAME_STARTED }
+      GameChannel.broadcast_to @game, { started: @game.started, error: error, type: Constants::ActionTypes::GAME_STARTED }
     end
 
     def handleAnswer(player_id, word, answer)
