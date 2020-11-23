@@ -6,14 +6,14 @@ class GameChannel < ApplicationCable::Channel
     game = @gameHandler.join(data["player_name"], data["room_code"])
     gameJson = game.as_json(include: [:words, :players])
     stream_for game
-    broadcast_to game, { game: gameJson, type: "GAME_JOINED" }
+    broadcast_to game, { game: gameJson, type: ActionTypes::GAME_JOINED }
   end
 
   def createGame(data)
-    game = @gameHandler.create(data["creator_name"], data["word_count"])
+    game = @gameHandler.create(data["player_name"], data["word_count"])
     gameJson = game.as_json(include: [:words, :players])
     stream_for game
-    broadcast_to game, { game: gameJson, type: "GAME_CREATED" }
+    broadcast_to game, { game: gameJson, type: ActionTypes::GAME_CREATED }
   end
 
   def onAnswer(data)

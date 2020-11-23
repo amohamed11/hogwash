@@ -10,35 +10,33 @@ module GameServices
         return nil
       end
 
-      Player.create(name: name, score: 0, game: @game)
+      Player.create(name: name, game: @game)
+      @game.reload
 
       return @game
     end
 
-    def create(creator_name, word_count)
+    def create(player_name, word_count)
       room_code = SecureRandom.alphanumeric(5).upcase
 
       word_count = word_count.to_i
       words = Word.find(Word.pluck(:id).sample(word_count))
 
-      creator = Player.create(name: creator_name, score: 0)
-
       @game = Game.new(
-        room_code: room_code, 
-        done: false, 
-        words: words, 
-        creator: creator
+        room_code: room_code,
+        done: false,
+        words: words
       )
 
       unless @game.valid?
         puts @game.errors.messages
-        return nil
+        return @game.errors.messages
       end
 
       @game.save
 
-      creator.game = @game
-      creator.save
+      creator = Player.create(name: player_name, isCreator: true, game: @game)
+      @game.players.reload
 
       return @game
     end
