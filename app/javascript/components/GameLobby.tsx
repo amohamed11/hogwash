@@ -7,7 +7,8 @@ import { Button } from '@jobber/components/Button';
 import { Player } from '../models/index';
 
 type Props =  {
-  players: Player[]
+  players: Player[];
+  isCreator: boolean;
   startGame: () => void;
 };
 
@@ -15,6 +16,11 @@ const GameLobby: React.FC<Props> = (props) => {
   const playerList = props.players.map(function (player, index) {
     return <li key={index}>{player.name}</li>;
   });
+
+  let startButton;
+  if (props.isCreator) {
+    startButton = <Button label="Start" type="primary" onClick={props.startGame}/>
+  }
 
   return (
     <div className="game-lobby">
@@ -24,7 +30,7 @@ const GameLobby: React.FC<Props> = (props) => {
             { playerList }
           </ul>
         </Card>
-        <Button label="Start" type="primary" onClick={props.startGame}/>
+        { startButton }
       </Content>
     </div>
   );

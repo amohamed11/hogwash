@@ -9,11 +9,12 @@ import { showToast } from '@jobber/components/Toast';
 import WordList from "../components/WordList";
 import GameLobby from "../components/GameLobby";
 import { ActionCableContext } from "../services/CableContext";
-import { Game } from '../models';
+import { Game, Player } from '../models';
 
 const mapStateToProps = state => {
   return {
-    game: state.game as Game
+    game: state.game as Game,
+    player: state.player as Player
   }
 };
 
@@ -28,7 +29,7 @@ const Game: React.FC<Props> = (props) => {
   }
 
   if (!props.game.started) {
-    gameScreen = <GameLobby players={props.game.players} startGame={startGame} />
+    gameScreen = <GameLobby players={props.game.players} isCreator={props.player.isCreator} startGame={startGame} />
   } else {
     gameScreen = (
       <Content>

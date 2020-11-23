@@ -55,7 +55,11 @@ module GameServices
       if @game.players.count < 2
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
       else
+        firstWord = @game.words[0]
         @game.update(started: true)
+        @game.currentWord = firstWord
+        @game.save
+        @game.reload
       end
 
       GameChannel.broadcast_to @game, { started: @game.started, error: error, type: Constants::ActionTypes::GAME_STARTED }
@@ -87,6 +91,15 @@ module GameServices
 
       player.save
       voted_for_player.save
+    end
+
+    def nextWord()
+      index = @game.words.index(@game.currentWord)
+      if index >= @game.word.count
+        endGame()
+      else
+        endRound()
+      end
     end
 
     def endRound()

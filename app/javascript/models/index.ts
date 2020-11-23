@@ -21,6 +21,7 @@ export interface Game {
     updated_at: string;
     room_code: string;
     words: Word[];
+    currentWord: string;
     players: Player[];
     done: boolean;
     started: boolean;

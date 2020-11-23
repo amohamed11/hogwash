@@ -6,7 +6,7 @@ class GameChannel < ApplicationCable::Channel
     game, player, error = @gameHandler.join(data["player_name"], data["room_code"])
 
     if error.nil?
-      gameJson = game.as_json(include: [:words, :players])
+      gameJson = game.as_json(include: :players)
       playerJson = player.as_json
     end
 
@@ -17,7 +17,7 @@ class GameChannel < ApplicationCable::Channel
   def onCreateGame(data)
     game, player = @gameHandler.create(data["player_name"], data["word_count"])
 
-    gameJson = game.as_json(include: [:words, :players])
+    gameJson = game.as_json(include: [:players])
     playerJson = player.as_json
 
     stream_for game
@@ -43,14 +43,6 @@ class GameChannel < ApplicationCable::Channel
       data["answer"],
       data["voted_for_id"]
     )
-  end
-
-  def onRoundEnd()
-    @gameHandler.endRound()
-  end
-
-  def onGameEnd(data)
-    @gameHandler.endGame()
   end
 
   def onGameRoomClose(data)
