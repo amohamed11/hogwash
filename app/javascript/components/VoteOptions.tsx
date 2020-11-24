@@ -20,9 +20,11 @@ const VoteOptions: React.FC<Props> = (props) => {
   return (
     <div className="game-play-section">
       <Content>
-        <RadioGroup onChange={(value: number) => setVote(value)} value={vote}>
-          {voteChoices}
-        </RadioGroup>
+        <Content>
+          <RadioGroup onChange={(value: number) => setVote(value)} value={vote}>
+            {voteChoices}
+          </RadioGroup>
+        </Content>
         <Button label="Submit Vote" type="primary" onClick={onVote} />
       </Content>
     </div>

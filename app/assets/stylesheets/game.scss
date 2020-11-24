@@ -1,5 +1,4 @@
 .game-screen {
-  width: 70% !important;
   padding: 10vh;
 
   .game-header {
@@ -13,8 +12,8 @@
 
   .wrapper {
     display: grid;
-    grid-gap: 10px;
-    grid-template-columns: 1fr 2fr;
+    grid-gap: 5vw;
+    grid-template-columns: 1fr 3fr;
   }
 
   .game-scoreboard {

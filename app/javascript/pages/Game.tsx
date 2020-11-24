@@ -58,7 +58,7 @@ const Game: React.FC<Props> = (props) => {
         </Link>
         <Heading level={3}>Code: {props.game.room_code}</Heading>
       </div>
-      <div className="game-screen center">
+      <div className="game-screen">
         <Content spacing="large">
           { gameScreen }
         </Content>

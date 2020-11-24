@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Content } from '@jobber/components/Content';
 import { InputText } from '@jobber/components/InputText';
@@ -13,12 +13,15 @@ type Props =  {
 
 const AnswerInput: React.FC<Props> = (props) => {
   const [answer, setAnswer] = React.useState('');
-  const [buttonLabel, setButtonLabel] = React.useState('Submit Answer');
   const [{ isDirty, isValid }, setFormState] = useFormState();
+
+  useEffect(() => {
+    setAnswer(answer);
+  });
 
   return (
     <div className="game-answer-input">
-      <Form onSubmit={updateAnswer} onStateChange={setFormState}>
+      <Form onSubmit={onAnswer} onStateChange={setFormState}>
         <Content>
           <Content>
             <InputText
@@ -33,18 +36,17 @@ const AnswerInput: React.FC<Props> = (props) => {
               }}
             />
           </Content>
-          <Button label={buttonLabel} type="primary" submit={true} disabled={!isDirty || !isValid} />
+          <Button label="Submit Answer" type="primary" submit={true} disabled={!isDirty || !isValid} />
         </Content>
       </Form>
     </div>
   );
 
-  function updateAnswer() {
-    props.onAnswer(answer);
+  function onAnswer() {
     showToast({
       message: "Answer submitted"
     })
-    setButtonLabel("Update Answer");
+    props.onAnswer(answer);
   }
 };
 

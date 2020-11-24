@@ -23,7 +23,7 @@ const GameLobby: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="game-lobby">
+    <div className="game-lobby center">
       <Content>
         <Card title="Players">
           <ul>
