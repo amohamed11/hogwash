@@ -1,12 +1,30 @@
-.game-header {
-  float: left;
-  padding: 1vw;
+.game-screen {
+  width: 70% !important;
+  padding: 10vh;
 
-  h1 {
-    margin-bottom: 10px;
+  .game-header {
+    float: left;
+    padding: 1vw;
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  }
+
+  .wrapper {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 2fr;
+  }
+
+  .game-scoreboard {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .game-play-section {
+    grid-column: 2;
+    grid-row: 1;
   }
 }
 
-.game-screen {
-  padding: 10vh;
-}

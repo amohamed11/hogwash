@@ -26,3 +26,8 @@ export interface Game {
     done: boolean;
     started: boolean;
 }
+
+export interface Answer {
+    answerer_id: number;
+    definition: string;
+}

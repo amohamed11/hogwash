@@ -75,6 +75,8 @@ module GameServices
 
       player.score += score
       player.save
+
+      GameChannel.broadcast_to @game, { answer: {definition: answer, answerer_id: player_id}, type: Constants::ActionTypes::GAME_PLAYER_ANSWERED }
     end
 
     def handleVote(player_id, voted_for_definition, voted_for_id)

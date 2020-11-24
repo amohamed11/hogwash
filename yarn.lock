@@ -936,10 +936,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.4.tgz#19bf0f5af19149111c40d98bb0cf82119f5d9eeb"
   integrity sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==
 
-"@jobber/components@^2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@jobber/components/-/components-2.10.0.tgz#9ab07ec7f204dbedff6446d664d1c4346084a538"
-  integrity sha512-ySUG5bAmw/3f96UEbWGDWipctf6DBK8lKyhDw8LG+8OVBE1aKolSdYCxI+pdMwGiruZDGwsWI0FDu0CLAIAMHA==
+"@jobber/components@^2.13.0":
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/@jobber/components/-/components-2.13.0.tgz#0b505dda6233558ca641bc5f5af5b3b7556d8664"
+  integrity sha512-SpyizBZx0T6EEkVC6NCOxlVA5QQK6ocgb0JofOafFNbLkGQGSr1u0dfYT6DWIUEWvN32h3whvP5NDIYNA9rcFA==
   dependencies:
     "@jobber/design" "^0.9.1"
     "@jobber/formatters" "^0.0.4"

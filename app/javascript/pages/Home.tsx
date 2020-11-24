@@ -61,7 +61,7 @@ const Home: React.FC<Props> = (props) => {
 
         <Divider />
 
-        <div className="join-input-group  center">
+        <div className="join-input-group center">
           <Heading level={5}>Join a game</Heading>
           <Form onSubmit={() => joinGame(player_name, room_code)} onStateChange={setFormState}>
             <Content>

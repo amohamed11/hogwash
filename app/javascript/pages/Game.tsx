@@ -6,16 +6,18 @@ import { Content } from '@jobber/components/Content';
 import { Heading } from '@jobber/components/Heading';
 import { showToast } from '@jobber/components/Toast';
 
-import WordCard from "../components/WordCard";
 import GameLobby from "../components/GameLobby";
+import GameScoreBoard from "../components/GameScoreBoard";
+import GamePlaySection from "../components/GamePlaySection";
 import { ActionCableContext } from "../services/CableContext";
-import { Game, Word, Player } from '../models';
+import { Game, Word, Player, Answer } from '../models';
 
 const mapStateToProps = state => {
   return {
     game: state.game as Game,
     player: state.player as Player,
-    word: state.word as Word
+    word: state.word as Word,
+    roundAnswers: state.roundAnswers as Answer[]
   }
 };
 
@@ -34,7 +36,16 @@ const Game: React.FC<Props> = (props) => {
   } else {
     gameScreen = (
       <Content>
-        <WordCard word={props.word}/>
+        <div className="wrapper">
+          <GameScoreBoard players={props.game.players} player={props.player} />
+          <GamePlaySection
+            game={props.game}
+            word={props.word}
+            roundAnswers={props.roundAnswers}
+            submitAnswer={submitAnswer}
+            submitVote={submitVote}
+          />
+        </div>
       </Content>
     )
   }
@@ -64,6 +75,14 @@ const Game: React.FC<Props> = (props) => {
     } else {
       cable.perform("onGameStart");
     }
+  }
+
+  function submitAnswer(definition: string) {
+    cable.perform("onAnswer", {player_id: props.player.id, answer: definition});
+  }
+
+  function submitVote(voted_for_answer: Answer) {
+    cable.perform("onVote", {player_id: props.player.id, definition: voted_for_answer.definition, voted_for_id: voted_for_answer.answerer_id});
   }
 };
 
