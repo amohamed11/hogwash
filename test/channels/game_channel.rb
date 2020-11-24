@@ -1,5 +1,5 @@
 require 'test_helper'
- 
+
 class GameChannelTest < ActionCable::Channel::TestCase
     test "subscribes and create a game, try to start & fail" do
         subscribe
@@ -16,11 +16,13 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert_equal game.words.count, 5
         assert_equal creator.isCreator, true
         assert_broadcast_on(game, { game: gameJson, player: creator, type: Constants::ActionTypes::GAME_CREATED })
-        assert_broadcast_on(game, { started: false, error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED }) do
-          perform :onGameStart
-          game.reload
-        end
+
+        perform :onGameStart
+        game.reload
+        gameJson = game.as_json
+        assert_broadcast_on(game, { game: gameJson, error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED })
         assert_equal game.started, false
+        assert_equal game.current_word, -1
     end
 
     test "subscribes and join a game, creator starts game" do
@@ -37,11 +39,13 @@ class GameChannelTest < ActionCable::Channel::TestCase
         assert subscription.confirmed?
         assert_equal player.name, "TestPlayer"
         assert_broadcast_on(game, { game: gameJson, player: playerJson, error: nil, type: Constants::ActionTypes::GAME_JOINED })
-        assert_broadcast_on(game, { started: true, error: nil, type: Constants::ActionTypes::GAME_STARTED }) do
-          perform :onGameStart
-          game.reload
-        end
+
+        perform :onGameStart
+        game.reload
+        gameJson = game.as_json
+        assert_broadcast_on(game, { game: gameJson, error: nil, type: Constants::ActionTypes::GAME_STARTED })
         assert_equal game.started, true
+        assert_equal game.current_word, 0
      end
 
     test "player answers incorrectly getting score of 0" do
@@ -51,9 +55,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
-        wordText = game.currentWord
 
-        perform :onAnswer, player_id: player.id, word: word, answer: "totoro"
+        perform :onGameStart
+        perform :onAnswer, player_id: player.id, answer: "totoro"
         player.reload
 
         assert subscription.confirmed?
@@ -68,11 +72,13 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
-        word = game.currentWord
 
-        perform :onAnswer, player_id: player.id, word: word
+        perform :onGameStart
+        game.reload
+        word = game.words[game.current_word]
+
+        perform :onAnswer, player_id: player.id, answer: word.definition
         player.reload
-
 
         assert subscription.confirmed?
         assert_has_stream_for game
@@ -87,9 +93,9 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
-        word = game.currentWord
 
-        perform :onVote, player_id: player.id, word: word, answer: "totoro", voted_for_id: voted_for.id
+        perform :onGameStart
+        perform :onVote, player_id: player.id, definition: "Totoro", voted_for_id: voted_for.id
         player.reload
         voted_for.reload
 
@@ -107,9 +113,12 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
-        word = game.currentWord
 
-        perform :onVote, player_id: player.id, word: word, voted_for_id: voted_for.id
+        perform :onGameStart
+        game.reload
+        word = game.words[game.current_word]
+
+        perform :onVote, player_id: player.id, definition: word.definition, voted_for_id: voted_for.id
         player.reload
         voted_for.reload
 
@@ -127,9 +136,12 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
         player = game.players.find_by(name: "TestPlayer")
         voted_for = game.players.where.not(name: "TestPlayer").first
-        word = game.currentWord
 
-        perform :onVote, player_id: player.id, word: word, voted_for_id: voted_for.id
+        perform :onGameStart
+        game.reload
+        word = game.words[game.current_word]
+
+        perform :onVote, player_id: player.id, definition: word.definition, voted_for_id: voted_for.id
         player.reload
         voted_for.reload
 

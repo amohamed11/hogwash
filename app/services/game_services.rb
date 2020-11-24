@@ -55,17 +55,18 @@ module GameServices
       if @game.players.count < 2
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
       else
-        firstWord = @game.words[0]
         @game.update(started: true)
-        @game.update(currentWord: firstWord)
+        @game.update(current_word: 0)
       end
 
-      GameChannel.broadcast_to @game, { started: @game.started, error: error, type: Constants::ActionTypes::GAME_STARTED }
+      @game.reload
+      gameJson = @game.as_json
+      GameChannel.broadcast_to @game, { game: gameJson, error: error, type: Constants::ActionTypes::GAME_STARTED }
     end
 
     def handleAnswer(player_id, answer)
       player = @game.players.find(player_id)
-      word = @game.words.find_by(word: @game.currentWord)
+      word = @game.words[@game.current_word]
       score = 0
 
       if answer == word.definition
@@ -79,7 +80,7 @@ module GameServices
     def handleVote(player_id, voted_for_definition, voted_for_id)
       player = @game.players.find(player_id)
       voted_for_player = @game.players.find(voted_for_id)
-      word = @game.words.find_by(word: @game.currentWord)
+      word = @game.words[@game.current_word]
 
       if voted_for_definition == word.definition
         player.score += 2
@@ -92,17 +93,15 @@ module GameServices
     end
 
     def nextWord()
-      currentWord = @game.words.find_by(word: @game.currentWord)
-      index = @game.words.index(currentWord)
-      if index >= @game.word.count
+      index = @game.current_word
+      index += 1
+      if index >= @game.words.count
         endGame()
       else
-        endRound()
+        @game.update(current_word: index)
+        gameJson = @game.as_json
+        GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_ROUND_ENDED }
       end
-    end
-
-    def endRound()
-      GameChannel.broadcast_to @game, { game: @game, type: Constants::ActionTypes::GAME_ROUND_ENDED }
     end
 
     def endGame()
@@ -110,6 +109,7 @@ module GameServices
       winner = players.order('score DESC').first
 
       @game.update(winner: winner)
+      @game.update(done: true, started: false)
 
       GameChannel.broadcast_to @game, { game: @game, type: Constants::ActionTypes::GAME_ENDED }
     end

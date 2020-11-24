@@ -38,7 +38,7 @@ class GameChannel < ApplicationCable::Channel
   def onVote(data)
     @gameHandler.handleVote(
       data["player_id"],
-      data["voted_for_definition"],
+      data["definition"],
       data["voted_for_id"]
     )
   end
