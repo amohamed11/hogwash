@@ -9,12 +9,13 @@ import { showToast } from '@jobber/components/Toast';
 import WordCard from "../components/WordCard";
 import GameLobby from "../components/GameLobby";
 import { ActionCableContext } from "../services/CableContext";
-import { Game, Player } from '../models';
+import { Game, Word, Player } from '../models';
 
 const mapStateToProps = state => {
   return {
     game: state.game as Game,
-    player: state.player as Player
+    player: state.player as Player,
+    word: state.word as Word
   }
 };
 
@@ -33,7 +34,7 @@ const Game: React.FC<Props> = (props) => {
   } else {
     gameScreen = (
       <Content>
-        <WordCard word={props.game.currentWord}/>
+        <WordCard word={props.word}/>
       </Content>
     )
   }

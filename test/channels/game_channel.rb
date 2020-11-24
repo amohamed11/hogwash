@@ -6,7 +6,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onCreateGame, player_name: "TestCreator", word_count: 5
 
         game = Game.last
-        gameJson = game.as_json(include: :players)
+        gameJson = game.as_json(include: [:words, :players])
 
         creator = game.players.first
         creatorJson = creator.as_json
@@ -33,7 +33,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
         perform :onJoinGame, player_name: "TestPlayer", room_code: game.room_code
 
         player = game.players.find_by(name: "TestPlayer")
-        gameJson = game.as_json(include: :players)
+        gameJson = game.as_json(include: [:words, :players])
         playerJson = player.as_json
 
         assert subscription.confirmed?

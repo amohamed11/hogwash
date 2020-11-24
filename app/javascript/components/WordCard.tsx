@@ -4,8 +4,10 @@ import { Content } from '@jobber/components/Content';
 import { Card } from '@jobber/components/Card';
 import { Heading } from '@jobber/components/Heading';
 
+import { Word } from '../models/index';
+
 type Props = {
-  word: string;
+  word: Word;
 };
 
 const WordCard: React.FC<Props> = (props) => {
@@ -14,7 +16,7 @@ const WordCard: React.FC<Props> = (props) => {
       <Content spacing="large">
         <Card>
           <Heading level={4}>
-            {props.word}
+            {props.word.word}
           </Heading>
         </Card>
       </Content>

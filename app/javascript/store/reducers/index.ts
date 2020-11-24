@@ -1,11 +1,12 @@
 import * as ACTIONS from '../actions/actionTypes';
-import { Game, Player } from '../../models/index';
+import { Game, Word, Player } from '../../models/index';
 import { RootState } from './state';
 
 // Initial Store State
 var initialState: RootState = {
   game: null as Game,
   player: null as Player,
+  word: null as Word,
   connected: false,
   error: null
 };
@@ -36,12 +37,15 @@ export default function reducer(state = initialState, action) {
       };
 
     case ACTIONS.GAME_STARTED:
+      const currentWord: Word = state.game.words[action.game.current_word];
       return {
         ...state,
         game: {
           ...state.game,
-          started: action.started
+          started: action.game.started,
+          current_word: action.game.current_word
         },
+        word: currentWord,
         error: action.error
       };
 
