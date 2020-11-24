@@ -52,6 +52,13 @@ module GameServices
     def start()
       error = nil
 
+      if @game.done
+        words = Word.find(Word.pluck(:id).sample(word_count))
+        @game.update(done: false)
+        @game.update(words: words)
+        @game.reload
+      end
+
       if @game.players.count < 2
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
       else
@@ -97,6 +104,7 @@ module GameServices
     def nextWord()
       index = @game.current_word
       index += 1
+
       if index >= @game.words.count
         endGame()
       else
