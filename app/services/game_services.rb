@@ -52,6 +52,7 @@ module GameServices
     end
 
     def start()
+      @game.reload
       error = nil
 
       if @game.done
@@ -65,7 +66,7 @@ module GameServices
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
       else
         @game.update(started: true)
-        @game.update(current_word: 0)
+        @game.increment! :current_word
       end
 
       @game.reload
@@ -74,13 +75,15 @@ module GameServices
     end
 
     def handleAnswer(player_id, answer)
+      @game.reload
       player = @game.players.find(player_id)
       word = @game.words[@game.current_word]
       score = 0
 
       # If the answer is correct, no need to add the answer twice to possible vote options
       threshold = ((answer.length + word.definition.length) / 3).to_f.ceil
-      if Levenshtein.distance(answer, word.definition) <= threshold
+      puts "Current word: ", @game.current_word
+      if Levenshtein.distance(word.definition, answer) <= threshold
         score += 3
         player.increment! :score, score
         @game.players.reload
@@ -91,6 +94,7 @@ module GameServices
     end
 
     def handleVote(player_id, voted_for_definition, voted_for_id)
+      @game.reload
       player = @game.players.find(player_id)
       word = @game.words[@game.current_word]
 
@@ -106,13 +110,13 @@ module GameServices
     end
 
     def nextWord()
+      @game.reload
       index = @game.current_word
-      index += 1
 
       if index >= @game.words.count
         endGame()
       else
-        @game.update(current_word: index)
+        @game.increment! :current_word
         gameJson = @game.as_json(include: :players)
       end
 
@@ -120,6 +124,7 @@ module GameServices
     end
 
     def endGame()
+      @game.reload
       players = @game.players
       winner = players.order('score DESC').first
 
