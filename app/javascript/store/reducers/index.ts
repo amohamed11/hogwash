@@ -1,5 +1,5 @@
 import * as ACTIONS from '../actions/actionTypes';
-import { Game, Word, Player, Answer } from '../../models/index';
+import { Game, Word, Player, Answer, Vote } from '../../models/index';
 import { RootState } from './state';
 
 // Initial Store State
@@ -8,6 +8,7 @@ var initialState: RootState = {
   player: null as Player,
   word: null as Word,
   roundAnswers: [] as Answer[],
+  roundVotes: [] as Vote[],
   connected: false,
   error: null
 };
@@ -39,6 +40,7 @@ export default function reducer(state = initialState, action) {
 
     case ACTIONS.GAME_STARTED:
       const currentWord: Word = state.game.words[action.game.current_word];
+      const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
       return {
         ...state,
         game: {
@@ -46,6 +48,7 @@ export default function reducer(state = initialState, action) {
           started: action.game.started,
           current_word: action.game.current_word
         },
+        roundAnswers: [...state.roundAnswers, correctAnswer],
         word: currentWord,
         error: action.error
       };
@@ -54,6 +57,12 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         roundAnswers: [...state.roundAnswers, action.answer]
+      };
+
+    case ACTIONS.GAME_PLAYER_VOTED:
+      return {
+        ...state,
+        roundVotes: [...state.roundVotes, action.vote]
       };
 
     default:

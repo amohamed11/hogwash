@@ -13,7 +13,10 @@ type Props =  {
 
 const VoteOptions: React.FC<Props> = (props) => {
   const [vote, setVote] = React.useState(0);
-  const voteChoices = props.roundAnswers.map(function (answer, index) {
+  const shuffeldAnswers = React.useMemo(() => {
+    return shuffleArray(props.roundAnswers);
+  }, []);
+  const voteChoices = shuffeldAnswers.map(function (answer, index) {
     return <RadioOption key={index} value={index} label={answer.definition} />;
   });
 
@@ -33,6 +36,21 @@ const VoteOptions: React.FC<Props> = (props) => {
   function onVote() {
     const voted_for_answer: Answer = props.roundAnswers[vote];
     props.onVote(voted_for_answer);
+  }
+  
+  /* Randomize array in-place using Durstenfeld shuffle algorithm 
+   * Source: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+   * */
+  function shuffleArray(array: Answer[]): Answer[] {
+    const arrayCopy = array.slice();
+    for (var i = arrayCopy.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = arrayCopy[i];
+      arrayCopy[i] = arrayCopy[j];
+      arrayCopy[j] = temp;
+    }
+  
+    return arrayCopy;
   }
 };
 

@@ -31,3 +31,7 @@ export interface Answer {
     answerer_id: number;
     definition: string;
 }
+
+export interface Vote extends Answer {
+    voter_id: number;
+}

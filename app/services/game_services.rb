@@ -88,17 +88,19 @@ module GameServices
 
     def handleVote(player_id, voted_for_definition, voted_for_id)
       player = @game.players.find(player_id)
-      voted_for_player = @game.players.find(voted_for_id)
       word = @game.words[@game.current_word]
 
       if voted_for_definition == word.definition
         player.score += 2
+        player.save
       else
+        voted_for_player = @game.players.find(voted_for_id)
         voted_for_player.score += 1
+        voted_for_player.save
       end
 
-      player.save
-      voted_for_player.save
+
+      GameChannel.broadcast_to @game, { vote: {definition: voted_for_definition, answerer_id: voted_for_id, voter_id: player_id}, type: Constants::ActionTypes::GAME_PLAYER_VOTED }
     end
 
     def nextWord()

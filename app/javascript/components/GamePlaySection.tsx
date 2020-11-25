@@ -2,16 +2,17 @@ import React from 'react';
 
 import { Content } from '@jobber/components/Content';
 import { Heading } from '@jobber/components/Heading';
-import { Button } from '@jobber/components/Button';
 
-import { Game, Word, Answer } from '../models/index';
+import { Game, Word, Answer, Vote } from '../models/index';
 import AnswerInput from '../components/AnswerInput';
 import VoteOptions from '../components/VoteOptions';
+import RoundResults from '../components/RoundResults';
 
 type Props =  {
   game: Game;
   word: Word;
   roundAnswers: Answer[];
+  roundVotes: Vote[];
   submitAnswer: (definition: string) => void;
   submitVote: (voted_for_answer: Answer) => void;
 };
@@ -23,12 +24,19 @@ const GamePlaySection: React.FC<Props> = (props) => {
   let votingSection;
   let answerSection;
   let waitingSection;
+  let roundResults;
 
   if (!answered) {
     answerSection = <AnswerInput onAnswer={onAnswer} />;
-  } else if (!voted && props.game.players.length == props.roundAnswers.length) {
+  }
+  /* check if user voted & collected answers are the size of the players +1 for correct definition */
+  else if (!voted && props.roundAnswers.length == props.game.players.length+1) {
     votingSection = <VoteOptions roundAnswers={props.roundAnswers} onVote={onVote} />;
-  } else {
+  }
+  else if (voted && props.roundVotes.length == props.game.players.length) {
+    roundResults = <RoundResults votes={props.roundVotes} players={props.game.players}/>
+  }
+  else {
     waitingSection = (
       <Content>
         <Heading level={5}>Waiting on other players ...</Heading>
@@ -43,6 +51,7 @@ const GamePlaySection: React.FC<Props> = (props) => {
         {votingSection}
         {answerSection}
         {waitingSection}
+        {roundResults}
       </Content>
     </div>
   );

@@ -10,14 +10,15 @@ import GameLobby from "../components/GameLobby";
 import GameScoreBoard from "../components/GameScoreBoard";
 import GamePlaySection from "../components/GamePlaySection";
 import { ActionCableContext } from "../services/CableContext";
-import { Game, Word, Player, Answer } from '../models';
+import { Game, Word, Player, Answer, Vote } from '../models';
 
 const mapStateToProps = state => {
   return {
     game: state.game as Game,
     player: state.player as Player,
     word: state.word as Word,
-    roundAnswers: state.roundAnswers as Answer[]
+    roundAnswers: state.roundAnswers as Answer[],
+    roundVotes: state.roundVotes as Vote[]
   }
 };
 
@@ -42,6 +43,7 @@ const Game: React.FC<Props> = (props) => {
             game={props.game}
             word={props.word}
             roundAnswers={props.roundAnswers}
+            roundVotes={props.roundVotes}
             submitAnswer={submitAnswer}
             submitVote={submitVote}
           />
