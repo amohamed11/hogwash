@@ -90,7 +90,7 @@ module GameServices
       player = @game.players.find(player_id)
       word = @game.words[@game.current_word]
 
-      if voted_for_definition == word.definition
+      if voted_for_id == -1 || voted_for_definition == word.definition
         player.score += 2
         player.save
       else

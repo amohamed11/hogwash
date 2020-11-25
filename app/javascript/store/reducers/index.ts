@@ -29,7 +29,7 @@ export default function reducer(state = initialState, action) {
       };
 
     case ACTIONS.GAME_CREATED:
-    case ACTIONS.GAME_JOINED:
+    case ACTIONS.GAME_JOINED:{
       const player: Player = state.player || action.player;
       return {
         ...state,
@@ -37,8 +37,24 @@ export default function reducer(state = initialState, action) {
         player: player,
         error: action.error
       };
+    }
 
-    case ACTIONS.GAME_STARTED:
+    case ACTIONS.GAME_ROUND_ENDED:{
+      const currentWord: Word = state.game.words[action.game.current_word];
+      const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          current_word: action.game.current_word
+        },
+        roundAnswers: [correctAnswer],
+        roundVotes: [],
+        word: currentWord
+      };
+    }
+
+    case ACTIONS.GAME_STARTED:{
       const currentWord: Word = state.game.words[action.game.current_word];
       const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
       return {
@@ -52,6 +68,7 @@ export default function reducer(state = initialState, action) {
         word: currentWord,
         error: action.error
       };
+    }
 
     case ACTIONS.GAME_PLAYER_ANSWERED:
       return {

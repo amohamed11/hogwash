@@ -4,7 +4,7 @@ import { Content } from '@jobber/components/Content';
 import { RadioGroup, RadioOption } from '@jobber/components/RadioGroup';
 import { Button } from '@jobber/components/Button';
 
-import { Game, Word, Answer } from '../models/index';
+import { Answer } from '../models/index';
 
 type Props =  {
   roundAnswers: Answer[];

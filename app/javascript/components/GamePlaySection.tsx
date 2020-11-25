@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Content } from '@jobber/components/Content';
 import { Heading } from '@jobber/components/Heading';
+import { Button } from '@jobber/components/Button';
 
-import { Game, Word, Answer, Vote } from '../models/index';
+import { Game, Word, Answer, Vote, Player } from '../models/index';
 import AnswerInput from '../components/AnswerInput';
 import VoteOptions from '../components/VoteOptions';
 import RoundResults from '../components/RoundResults';
@@ -11,15 +12,24 @@ import RoundResults from '../components/RoundResults';
 type Props =  {
   game: Game;
   word: Word;
+  player: Player;
   roundAnswers: Answer[];
   roundVotes: Vote[];
   submitAnswer: (definition: string) => void;
   submitVote: (voted_for_answer: Answer) => void;
+  getNextWord: () => void;
 };
 
 const GamePlaySection: React.FC<Props> = (props) => {
   const [answered, setAnswered] = React.useState(false);
   const [voted, setVoted] = React.useState(false);
+
+  useEffect(() => {
+    if (props.roundAnswers.length < 2 && props.roundVotes.length == 0 && answered && voted) {
+      setAnswered(false);
+      setVoted(false);
+    }
+  })
 
   let votingSection;
   let answerSection;
@@ -29,12 +39,16 @@ const GamePlaySection: React.FC<Props> = (props) => {
   if (!answered) {
     answerSection = <AnswerInput onAnswer={onAnswer} />;
   }
-  /* check if user voted & collected answers are the size of the players +1 for correct definition */
   else if (!voted && props.roundAnswers.length == props.game.players.length+1) {
     votingSection = <VoteOptions roundAnswers={props.roundAnswers} onVote={onVote} />;
   }
   else if (voted && props.roundVotes.length == props.game.players.length) {
-    roundResults = <RoundResults votes={props.roundVotes} players={props.game.players}/>
+    roundResults = (
+      <Content>
+        <RoundResults votes={props.roundVotes} players={props.game.players}/>
+        { props.player.isCreator ? <Button label="Next Word" onClick={onNextWord} /> : null}
+      </Content>
+    )
   }
   else {
     waitingSection = (
@@ -64,6 +78,10 @@ const GamePlaySection: React.FC<Props> = (props) => {
   function onVote(voted_for_answer: Answer) {
     setVoted(true);
     props.submitVote(voted_for_answer);
+  }
+
+  function onNextWord() {
+    props.getNextWord();
   }
 };
 

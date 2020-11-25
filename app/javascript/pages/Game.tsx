@@ -42,10 +42,12 @@ const Game: React.FC<Props> = (props) => {
           <GamePlaySection
             game={props.game}
             word={props.word}
+            player={props.player}
             roundAnswers={props.roundAnswers}
             roundVotes={props.roundVotes}
             submitAnswer={submitAnswer}
             submitVote={submitVote}
+            getNextWord={getNextWord}
           />
         </div>
       </Content>
@@ -85,6 +87,10 @@ const Game: React.FC<Props> = (props) => {
 
   function submitVote(voted_for_answer: Answer) {
     cable.perform("onVote", {player_id: props.player.id, definition: voted_for_answer.definition, voted_for_id: voted_for_answer.answerer_id});
+  }
+
+  function getNextWord() {
+    cable.perform("onNextWord")
   }
 };
 
