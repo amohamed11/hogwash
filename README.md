@@ -20,7 +20,8 @@ Current design is focused on being functional, things such as animations & trans
 - [x] Start game from lobby once players have joined
 - [x] Submit answer for word
 - [x] Vote on other player's definition  
-- [ ] Distribute score and then finish round (get next word)  
-- [ ] Keep track of player leaderboard in the game  
-- [ ] Finish game  
+- [x] Distribute score and then finish round (get next word)  
+- [x] Keep track of player scoreboard in the game  
+- [x] If correct answer is submitted, go to the next word
+- [ ] Finish a game & close the lobby  
 - [ ] Start the game anew with newset of words  

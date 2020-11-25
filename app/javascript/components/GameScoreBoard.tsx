@@ -12,6 +12,7 @@ type Props =  {
 };
 
 const GameScoreBoard: React.FC<Props> = (props) => {
+  let sortedPlayerList = props.players.sort((a, b) => b.score - a.score);
   const playerList = props.players.map(function (player, index) {
     return (
       <li className={player == props.player ? "player-score" : ""} key={index}>
