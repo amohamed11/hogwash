@@ -17,6 +17,7 @@ const mapStateToProps = state => {
     game: state.game as Game,
     player: state.player as Player,
     word: state.word as Word,
+    correctSubmission: state.correctSubmission as Answer,
     roundAnswers: state.roundAnswers as Answer[],
     roundVotes: state.roundVotes as Vote[]
   }
@@ -43,6 +44,7 @@ const Game: React.FC<Props> = (props) => {
             game={props.game}
             word={props.word}
             player={props.player}
+            correctSubmission={props.correctSubmission}
             roundAnswers={props.roundAnswers}
             roundVotes={props.roundVotes}
             submitAnswer={submitAnswer}

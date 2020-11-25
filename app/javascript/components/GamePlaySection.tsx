@@ -13,6 +13,7 @@ type Props =  {
   game: Game;
   word: Word;
   player: Player;
+  correctSubmission: Answer;
   roundAnswers: Answer[];
   roundVotes: Vote[];
   submitAnswer: (definition: string) => void;
@@ -25,7 +26,11 @@ const GamePlaySection: React.FC<Props> = (props) => {
   const [voted, setVoted] = React.useState(false);
 
   useEffect(() => {
-    if (props.roundAnswers.length < 2 && props.roundVotes.length == 0 && answered && voted) {
+    if (props.correctSubmission)
+    {
+      setAnswered(false);
+    }
+    else if (props.roundAnswers.length < 2 && props.roundVotes.length == 0 && answered && voted) {
       setAnswered(false);
       setVoted(false);
     }
@@ -36,19 +41,22 @@ const GamePlaySection: React.FC<Props> = (props) => {
   let waitingSection;
   let roundResults;
 
-  if (!answered) {
-    answerSection = <AnswerInput onAnswer={onAnswer} />;
-  }
-  else if (!voted && props.roundAnswers.length == props.game.players.length+1) {
-    votingSection = <VoteOptions roundAnswers={props.roundAnswers} onVote={onVote} />;
-  }
-  else if (voted && props.roundVotes.length == props.game.players.length) {
+  if (props.correctSubmission || (voted && props.roundVotes.length == props.game.players.length)) {
     roundResults = (
       <Content>
-        <RoundResults votes={props.roundVotes} players={props.game.players}/>
+        <RoundResults correctSubmission={props.correctSubmission} word={props.word} votes={props.roundVotes} players={props.game.players}/>
         { props.player.isCreator ? <Button label="Next Word" onClick={onNextWord} /> : null}
       </Content>
     )
+  } 
+  else if (!answered) {
+    answerSection = <AnswerInput onAnswer={onAnswer} />;
+  }
+  else if (!voted && props.roundAnswers.length == props.game.players.length+1) {
+    // If the player submitted a correct answer then they cannot vote
+    if (props.roundAnswers.filter(a => a.answerer_id == props.player.id && a.definition === "").length == 0) {
+      votingSection = <VoteOptions roundAnswers={props.roundAnswers} onVote={onVote} />;
+    }
   }
   else {
     waitingSection = (

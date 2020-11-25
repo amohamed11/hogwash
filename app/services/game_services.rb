@@ -1,4 +1,6 @@
 require 'securerandom'
+require 'levenshtein'
+
 module GameServices
   class GameHandler
     def initialize()
@@ -76,14 +78,16 @@ module GameServices
       word = @game.words[@game.current_word]
       score = 0
 
-      if answer == word.definition
+      # If the answer is correct, no need to add the answer twice to possible vote options
+      threshold = ((answer.length + word.definition.length) / 3).to_f.ceil
+      if Levenshtein.distance(answer, word.definition) <= threshold
         score += 3
+        player.increment! :score, score
+        @game.players.reload
+        GameChannel.broadcast_to @game, { answer: {definition: answer, answerer_id: player_id}, type: Constants::ActionTypes::GAME_CORRECT_SUBMISSION }
+      else
+        GameChannel.broadcast_to @game, { answer: {definition: answer, answerer_id: player_id}, type: Constants::ActionTypes::GAME_PLAYER_ANSWERED }
       end
-
-      player.score += score
-      player.save
-
-      GameChannel.broadcast_to @game, { answer: {definition: answer, answerer_id: player_id}, type: Constants::ActionTypes::GAME_PLAYER_ANSWERED }
     end
 
     def handleVote(player_id, voted_for_definition, voted_for_id)
@@ -91,15 +95,13 @@ module GameServices
       word = @game.words[@game.current_word]
 
       if voted_for_id == -1 || voted_for_definition == word.definition
-        player.score += 2
-        player.save
+        player.increment! :score, 2
       else
         voted_for_player = @game.players.find(voted_for_id)
-        voted_for_player.score += 1
-        voted_for_player.save
+        voted_for_player.increment! :score, 1
       end
 
-
+      @game.players.reload
       GameChannel.broadcast_to @game, { vote: {definition: voted_for_definition, answerer_id: voted_for_id, voter_id: player_id}, type: Constants::ActionTypes::GAME_PLAYER_VOTED }
     end
 
@@ -111,9 +113,10 @@ module GameServices
         endGame()
       else
         @game.update(current_word: index)
-        gameJson = @game.as_json
-        GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_ROUND_ENDED }
+        gameJson = @game.as_json(include: :players)
       end
+
+      GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_NEXT_WORD }
     end
 
     def endGame()

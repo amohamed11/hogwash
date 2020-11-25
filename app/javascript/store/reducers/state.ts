@@ -4,6 +4,7 @@ export interface RootState {
   game: Game;
   player: Player;
   word: Word;
+  correctSubmission: Answer;
   roundAnswers: Answer[];
   roundVotes: Vote[];
   connected: false;

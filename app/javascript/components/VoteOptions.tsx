@@ -12,19 +12,20 @@ type Props =  {
 };
 
 const VoteOptions: React.FC<Props> = (props) => {
-  const [vote, setVote] = React.useState(0);
+  const [vote, setVote] = React.useState('');
   const shuffeldAnswers = React.useMemo(() => {
-    return shuffleArray(props.roundAnswers);
+    return shuffleArray(props.roundAnswers).filter(answer => answer.definition !== "");
   }, []);
+
   const voteChoices = shuffeldAnswers.map(function (answer, index) {
-    return <RadioOption key={index} value={index} label={answer.definition} />;
+    return <RadioOption key={index} value={answer.definition} label={answer.definition} />;
   });
 
   return (
     <div className="game-play-section">
       <Content>
         <Content>
-          <RadioGroup onChange={(value: number) => setVote(value)} value={vote}>
+          <RadioGroup onChange={(value: string) => setVote(value)} value={vote}>
             {voteChoices}
           </RadioGroup>
         </Content>
@@ -34,10 +35,10 @@ const VoteOptions: React.FC<Props> = (props) => {
   );
 
   function onVote() {
-    const voted_for_answer: Answer = props.roundAnswers[vote];
+    const voted_for_answer: Answer = props.roundAnswers.find(a => a.definition == vote);
     props.onVote(voted_for_answer);
   }
-  
+
   /* Randomize array in-place using Durstenfeld shuffle algorithm 
    * Source: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
    * */
@@ -49,7 +50,7 @@ const VoteOptions: React.FC<Props> = (props) => {
       arrayCopy[i] = arrayCopy[j];
       arrayCopy[j] = temp;
     }
-  
+
     return arrayCopy;
   }
 };

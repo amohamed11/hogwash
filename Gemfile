@@ -52,3 +52,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "redis", "~> 4.2"
+
+# Levenshtein distance for comparing answer with true definition
+gem 'levenshtein', '~> 0.2.2'
+gem 'levenshtein-ffi'

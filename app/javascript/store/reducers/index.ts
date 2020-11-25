@@ -7,6 +7,7 @@ var initialState: RootState = {
   game: null as Game,
   player: null as Player,
   word: null as Word,
+  correctSubmission: null as Answer,
   roundAnswers: [] as Answer[],
   roundVotes: [] as Vote[],
   connected: false,
@@ -39,21 +40,6 @@ export default function reducer(state = initialState, action) {
       };
     }
 
-    case ACTIONS.GAME_ROUND_ENDED:{
-      const currentWord: Word = state.game.words[action.game.current_word];
-      const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
-      return {
-        ...state,
-        game: {
-          ...state.game,
-          current_word: action.game.current_word
-        },
-        roundAnswers: [correctAnswer],
-        roundVotes: [],
-        word: currentWord
-      };
-    }
-
     case ACTIONS.GAME_STARTED:{
       const currentWord: Word = state.game.words[action.game.current_word];
       const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
@@ -64,9 +50,36 @@ export default function reducer(state = initialState, action) {
           started: action.game.started,
           current_word: action.game.current_word
         },
+        correctSubmission: null,
         roundAnswers: [...state.roundAnswers, correctAnswer],
         word: currentWord,
-        error: action.error
+        error: action.error,
+        endRound: false
+      };
+    }
+
+    case ACTIONS.GAME_NEXT_WORD:{
+      const currentWord: Word = state.game.words[action.game.current_word];
+      const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          current_word: action.game.current_word,
+          players: action.game.players
+        },
+        correctSubmission: null,
+        roundAnswers: [correctAnswer],
+        roundVotes: [],
+        word: currentWord,
+        endRound: false
+      };
+    }
+
+    case ACTIONS.GAME_CORRECT_SUBMISSION:{
+      return {
+        ...state,
+        correctSubmission: action.answer
       };
     }
 
