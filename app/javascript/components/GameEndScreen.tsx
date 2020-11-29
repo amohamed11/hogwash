@@ -11,6 +11,7 @@ type Props =  {
   game: Game;
   isCreator: boolean;
   startGame: () => void;
+  closeGameRoom: () => void;
 };
 
 const GameEndScreen: React.FC<Props> = (props) => {
@@ -25,7 +26,12 @@ const GameEndScreen: React.FC<Props> = (props) => {
 
   let restartButton;
   if (props.isCreator) {
-    restartButton = <Button label="Restart Game" type="primary" onClick={props.startGame}/>
+    restartButton = <Button label="Restart Game" type="primary" onClick={props.startGame} />
+  }
+
+  let closeButton;
+  if (props.isCreator) {
+    closeButton = <Button label="Close Lobby" type="primary" variation="destructive" onClick={props.closeGameRoom} />
   }
 
   return (
@@ -40,6 +46,7 @@ const GameEndScreen: React.FC<Props> = (props) => {
         </Card>
         { restartButton }
       </Content>
+      { closeButton }
     </div>
   );
 };

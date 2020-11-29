@@ -2,6 +2,7 @@ class GameChannel < ApplicationCable::Channel
   def subscribed
     @gameHandler = GameServices::GameHandler.new
   end
+
   def onJoinGame(data)
     game, player, error = @gameHandler.join(data["player_name"], data["room_code"])
 
@@ -47,7 +48,7 @@ class GameChannel < ApplicationCable::Channel
     @gameHandler.nextWord()
   end
 
-  def onGameRoomClose(data)
-    @gameHandler.closeGameRoom()
+  def onCloseGameLobby(data)
+    @gameHandler.closeGameLobby()
   end
 end

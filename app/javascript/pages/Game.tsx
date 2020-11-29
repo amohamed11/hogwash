@@ -34,7 +34,7 @@ const Game: React.FC<Props> = (props) => {
   if (!props.game) {
     return <Redirect to={"/"} />;
   } else if (props.game.done) {
-    endScreen = <GameEndScreen game={props.game} isCreator={props.player.isCreator} startGame={startGame} />
+    endScreen = <GameEndScreen game={props.game} isCreator={props.player.isCreator} startGame={startGame} closeGameRoom={closeLobby}/>
   }
 
   if (!props.game.started && !props.game.done) {
@@ -87,6 +87,11 @@ const Game: React.FC<Props> = (props) => {
       cable.perform("onGameStart");
     }
   }
+
+  function closeLobby() {
+    cable.perform("onCloseGameLobby");
+  }
+
 
   function submitAnswer(definition: string) {
     cable.perform("onAnswer", {player_id: props.player.id, answer: definition});

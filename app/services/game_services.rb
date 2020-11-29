@@ -87,7 +87,6 @@ module GameServices
 
       # If the answer is correct, no need to add the answer twice to possible vote options
       threshold = ((answer.length + word.definition.length) / 3).to_f.ceil
-      puts "Current word: ", @game.current_word
       if Levenshtein.distance(word.definition, answer) <= threshold
         score += 3
         player.increment! :score, score
@@ -137,8 +136,8 @@ module GameServices
       GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_ENDED }
     end
 
-    def closeGameRoom()
-      GameChannel.broadcast_to @game, { type: Constants::ActionTypes::GAME_CLOSED }
+    def closeGameLobby()
+      GameChannel.broadcast_to @game, { type: Constants::ActionTypes::GAME_LOBBY_CLOSED }
 
       Game.destroy(@game)
     end

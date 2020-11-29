@@ -19,7 +19,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onGameStart
         game.reload
-        gameJson = game.as_json
+        gameJson = game.as_json(include: [:words, :players])
         assert_broadcast_on(game, { game: gameJson, error: Constants::ErrorMessages::LOBBY_TOO_SMALL, type: Constants::ActionTypes::GAME_STARTED })
         assert_equal game.started, false
         assert_equal game.current_word, -1
@@ -42,7 +42,7 @@ class GameChannelTest < ActionCable::Channel::TestCase
 
         perform :onGameStart
         game.reload
-        gameJson = game.as_json
+        gameJson = game.as_json(include: [:words, :players])
         assert_broadcast_on(game, { game: gameJson, error: nil, type: Constants::ActionTypes::GAME_STARTED })
         assert_equal game.started, true
         assert_equal game.current_word, 0

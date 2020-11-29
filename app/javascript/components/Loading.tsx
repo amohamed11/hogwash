@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { ProgressBar } from '@jobber/components/ProgressBar';
 
 const Loading: React.FC = () => {
-  const [step, setStep] = useState(2);
-  const totalSteps = 6;
+  const [step, setStep] = useState(3);
+  const totalSteps = 5;
 
   useEffect(() => {
     const interval = setInterval(() => {

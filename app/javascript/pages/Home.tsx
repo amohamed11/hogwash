@@ -12,25 +12,31 @@ import { Divider } from '@jobber/components/Divider';
 import { Text } from '@jobber/components/Text';
 import { useFormState } from '@jobber/hooks';
 
-import { ActionCableContext } from "../services/CableContext";
+import { ActionCableContext } from '../services/CableContext';
 import { Game } from '../models';
+import Loading from '../components/Loading';
 
 const mapStateToProps = state => {
   return {
-    game: state.game as Game
+    game: state.game as Game,
+    connected: state.connected
   }
 };
 
 type Props = ReturnType<typeof mapStateToProps>;
 
 const Home: React.FC<Props> = (props) => {
-  const [word_count, setWordCount] = React.useState(1);
+  const [word_count, setWordCount] = React.useState(4);
   const [room_code, setRoomCode] = React.useState('');
   const [player_name, setPlayerName] = React.useState('');
 
   const [{ isDirty, isValid }, setFormState] = useFormState();
 
   const cable = useContext(ActionCableContext);
+
+  if (!props.connected) {
+    return <Loading />
+  }
 
   if (props.game) {
     return <Redirect push to={"/game/"+props.game.room_code} />;
@@ -96,7 +102,8 @@ const Home: React.FC<Props> = (props) => {
                     value={word_count}
                     onChange={(value: string) => setWordCount(parseInt(value))}
                   >
-                    <Option value="2">2</Option>
+                    <Option value="4">4</Option>
+                    <Option value="6">6</Option>
                     <Option value="8">8</Option>
                     <Option value="10">10</Option>
                     <Option value="12">12</Option>

@@ -104,6 +104,12 @@ export default function reducer(state = initialState, action) {
         correctSubmission: null
       };
 
+    case ACTIONS.GAME_LOBBY_CLOSED:
+      return {
+        ...initialState,
+        connected: true
+      };
+
     default:
       return state;
   }
