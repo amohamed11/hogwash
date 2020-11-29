@@ -29,8 +29,8 @@ module GameServices
     def create(name, word_count)
       room_code = SecureRandom.alphanumeric(5).upcase
 
-      word_count = word_count.to_i
-      words = Word.find(Word.pluck(:id).sample(word_count))
+      wordCount = word_count.to_i
+      words = Word.find(Word.pluck(:id).sample(wordCount))
 
       @game = Game.new(
         room_code: room_code,
@@ -56,21 +56,26 @@ module GameServices
       error = nil
 
       if @game.done
-        words = Word.find(Word.pluck(:id).sample(word_count))
+        wordCount = @game.words.count
+        words = Word.find(Word.pluck(:id).sample(wordCount))
+        @game.players.each do |player|
+          player.score = 0
+          player.save
+        end
+        @game.players.reload
         @game.update(done: false)
         @game.update(words: words)
-        @game.reload
       end
 
       if @game.players.count < 2
         error = Constants::ErrorMessages::LOBBY_TOO_SMALL
       else
         @game.update(started: true)
-        @game.increment! :current_word
+        @game.update(current_word: 0)
       end
 
       @game.reload
-      gameJson = @game.as_json
+      gameJson = @game.as_json(include: [:words, :players])
       GameChannel.broadcast_to @game, { game: gameJson, error: error, type: Constants::ActionTypes::GAME_STARTED }
     end
 
@@ -111,27 +116,25 @@ module GameServices
 
     def nextWord()
       @game.reload
-      index = @game.current_word
+      index = @game.current_word + 1
 
       if index >= @game.words.count
         endGame()
       else
         @game.increment! :current_word
         gameJson = @game.as_json(include: :players)
+        GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_NEXT_WORD }
       end
-
-      GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_NEXT_WORD }
     end
 
     def endGame()
       @game.reload
-      players = @game.players
-      winner = players.order('score DESC').first
 
-      @game.update(winner: winner)
       @game.update(done: true, started: false)
 
-      GameChannel.broadcast_to @game, { game: @game, type: Constants::ActionTypes::GAME_ENDED }
+      gameJson = @game.as_json(include: [:words, :players])
+
+      GameChannel.broadcast_to @game, { game: gameJson, type: Constants::ActionTypes::GAME_ENDED }
     end
 
     def closeGameRoom()

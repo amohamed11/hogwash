@@ -41,20 +41,20 @@ export default function reducer(state = initialState, action) {
     }
 
     case ACTIONS.GAME_STARTED:{
-      const currentWord: Word = state.game.words[action.game.current_word];
+      const currentWord: Word = action.game.words[action.game.current_word];
       const correctAnswer: Answer = { answerer_id: -1, definition: currentWord.definition };
       return {
         ...state,
         game: {
           ...state.game,
           started: action.game.started,
+          done: action.game.done,
           current_word: action.game.current_word
         },
         correctSubmission: null,
-        roundAnswers: [...state.roundAnswers, correctAnswer],
+        roundAnswers: [correctAnswer],
         word: currentWord,
-        error: action.error,
-        endRound: false
+        error: action.error
       };
     }
 
@@ -71,8 +71,7 @@ export default function reducer(state = initialState, action) {
         correctSubmission: null,
         roundAnswers: [correctAnswer],
         roundVotes: [],
-        word: currentWord,
-        endRound: false
+        word: currentWord
       };
     }
 
@@ -93,6 +92,16 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         roundVotes: [...state.roundVotes, action.vote]
+      };
+
+    case ACTIONS.GAME_ENDED:
+      return {
+        ...state,
+        game: action.game,
+        roundAnswers: [],
+        roundVotes: [],
+        word: null,
+        correctSubmission: null
       };
 
     default:

@@ -9,6 +9,7 @@ import { showToast } from '@jobber/components/Toast';
 import GameLobby from "../components/GameLobby";
 import GameScoreBoard from "../components/GameScoreBoard";
 import GamePlaySection from "../components/GamePlaySection";
+import GameEndScreen from "../components/GameEndScreen";
 import { ActionCableContext } from "../services/CableContext";
 import { Game, Word, Player, Answer, Vote } from '../models';
 
@@ -28,14 +29,17 @@ type Props = ReturnType<typeof mapStateToProps>;
 const Game: React.FC<Props> = (props) => {
   const cable = useContext(ActionCableContext);
   let gameScreen;
+  let endScreen;
 
-  if (!props.game || props.game?.done) {
+  if (!props.game) {
     return <Redirect to={"/"} />;
+  } else if (props.game.done) {
+    endScreen = <GameEndScreen game={props.game} isCreator={props.player.isCreator} startGame={startGame} />
   }
 
-  if (!props.game.started) {
+  if (!props.game.started && !props.game.done) {
     gameScreen = <GameLobby players={props.game.players} isCreator={props.player.isCreator} startGame={startGame} />
-  } else {
+  } else if (!props.game.done) {
     gameScreen = (
       <Content>
         <div className="wrapper">
@@ -67,6 +71,7 @@ const Game: React.FC<Props> = (props) => {
       <div className="game-screen">
         <Content spacing="large">
           { gameScreen }
+          { endScreen }
         </Content>
       </div>
     </div>

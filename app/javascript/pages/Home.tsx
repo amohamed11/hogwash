@@ -24,7 +24,7 @@ const mapStateToProps = state => {
 type Props = ReturnType<typeof mapStateToProps>;
 
 const Home: React.FC<Props> = (props) => {
-  const [word_count, setWordCount] = React.useState(6);
+  const [word_count, setWordCount] = React.useState(1);
   const [room_code, setRoomCode] = React.useState('');
   const [player_name, setPlayerName] = React.useState('');
 
@@ -96,7 +96,7 @@ const Home: React.FC<Props> = (props) => {
                     value={word_count}
                     onChange={(value: string) => setWordCount(parseInt(value))}
                   >
-                    <Option value="6">6</Option>
+                    <Option value="2">2</Option>
                     <Option value="8">8</Option>
                     <Option value="10">10</Option>
                     <Option value="12">12</Option>

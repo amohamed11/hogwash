@@ -27,6 +27,8 @@ const AnswerInput: React.FC<Props> = (props) => {
             <InputText
               onChange={(value: string) => setAnswer(value)}
               defaultValue=""
+              multiline={true}
+              rows={{ min: 1, max: 4 }}
               placeholder="Enter your answer"
               validations={{
                 required: {

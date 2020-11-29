@@ -27,7 +27,7 @@ const RoundResults: React.FC<Props> = (props) => {
         countedVotes.set(vote.definition, 1);
       }
     });
-  
+
     let sortedCountedVotes = new Map([...countedVotes.entries()].sort());
     sortedCountedVotes.forEach((count, definition) => {
       voteList.push(<li key={definition}>{definition}: {count}</li>);

@@ -22,7 +22,7 @@ const VoteOptions: React.FC<Props> = (props) => {
   });
 
   return (
-    <div className="game-play-section">
+    <div className="game-vote-options">
       <Content>
         <Content>
           <RadioGroup onChange={(value: string) => setVote(value)} value={vote}>

@@ -48,7 +48,7 @@ const GamePlaySection: React.FC<Props> = (props) => {
         { props.player.isCreator ? <Button label="Next Word" onClick={onNextWord} /> : null}
       </Content>
     )
-  } 
+  }
   else if (!answered) {
     answerSection = <AnswerInput onAnswer={onAnswer} />;
   }
